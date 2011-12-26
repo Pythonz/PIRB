@@ -46,7 +46,7 @@ def kick(nick,host,chan,arg):
 		if len(arg.split()) != 0:
 			target = arg.split()[0]
 			reason = "Requested."
-			if len(arg.split()) => 1:
+			if len(arg.split()) != 1:
 				reason = arg.split()[1:]
 			put("KICK %s %s :%s" % (chan,target,reason))
 
