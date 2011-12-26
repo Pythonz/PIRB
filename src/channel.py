@@ -26,6 +26,7 @@ bind("op","src_channel","pub","$op")
 bind("deop","src_channel","pub","$deop")
 bind("voice","src_channel","pub","$voice")
 bind("devoice","src_channel","pub","$devoice")
+bind("kick","src_channel","pub","$kick")
 
 def getflag(chan,auth):
 	for data in _chandb.execute("select flags from channel where channel='%s' and auth='%s'" % (chan,auth)):
@@ -36,12 +37,25 @@ def gethostflag(chan,host):
 		if wmatch(host.lower(), str(data[0]).lower()):
 			return str(data[1])
 
+def kick(nick,host,chan,arg):
+	auth = getauth(nick)
+	flag = getflag(chan,auth)
+	hostmask = nick+"!"+host
+	hostflag = gethostflag(chan,hostmask)
+	if flag == "n" or flag == "o" or hostflag == "o":
+		if len(arg.split()) != 0:
+			target = arg.split()[0]
+			reason = "Requested."
+			if len(arg.split()) => 1:
+				reason = arg.split()[1:]
+			put("KICK %s %s :%s" % (chan,target,reason))
+
 def op(nick,host,chan,arg):
 	auth = getauth(nick)
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		mode = "o"*len(arg.split())
 		putf("MODE %s +%s %s" % (chan,mode,arg))
 
@@ -50,7 +64,7 @@ def deop(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		mode = "o"*len(arg.split())
 		putf("MODE %s -%s %s" % (chan,mode,arg))
 
@@ -59,7 +73,7 @@ def voice(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		mode = "v"*len(arg.split())
 		putf("MODE %s +%s %s" % (chan,mode,arg))
 
@@ -68,7 +82,7 @@ def devoice(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		mode = "v"*len(arg.split())
 		putf("MODE %s -%s %s" % (chan,mode,arg))
 
@@ -78,7 +92,7 @@ def ban(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		if wmatch(target, "*!*@*"):
 			entry = False
 			for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
@@ -98,7 +112,7 @@ def unban(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		if wmatch(target, "*!*@*"):
 			entry = False
 			for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
@@ -117,7 +131,7 @@ def bans(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		for data in _chandb.execute("select ban from bans where channel='%s'" % chan):
 			irc_send(nick,"[%s] %s" % (chan,str(data[0])))
 
@@ -126,7 +140,7 @@ def channel_modes(nick,host,chan,arg):
 	hostmask = nick+"!"+host
 	flag = getflag(chan,auth)
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		_chandb.execute("update info set modes='%s' where channel='%s'" % (arg,chan))
 		put("MODE %s %s" % (chan,arg))
 
@@ -135,7 +149,7 @@ def channel_topic(nick,host,chan,arg):
 	hostmask = nick+"!"+host
 	flag = getflag(chan,auth)
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		_chandb.execute("update info set topic='%s' where channel='%s'" % (arg,chan))
 		put("TOPIC %s :%s" % (chan,arg))
 
@@ -325,7 +339,7 @@ def on_join_chan(text):
 	auth = getauth(nick)
 	flag = getflag(chan,auth)
 	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		putf("MODE %s +o %s" % (chan,nick))
 	if flag == "v" or hostflag == "v":
 		putf("MODE %s +v %s" % (chan,nick))
@@ -338,7 +352,7 @@ def channel_auth(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostflag = gethostflag(chan,hostmask)
 	put("NOTICE %s :[%s] Flag: %s, Hostflag: %s" % (nick,chan,flag,hostflag))
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
+	if flag == "n" or flag == "o" or hostflag == "o":
 		putf("MODE %s +o %s" % (chan,nick))
 	if flag == "v" or hostflag == "v":
 		putf("MODE %s +v %s" % (chan,nick))
