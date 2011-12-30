@@ -208,7 +208,9 @@ def on_mode(text):
 def channel_invite(text):
 	chan = text.split()[3]
 	if chan.startswith(":"):
-		chan = chan[1:]
+		for data in _chandb.execute("select channel from list where channel='%s'" % chan[1:]):
+			put("JOIN %s" % chan[1:])
+	else:
 		for data in _chandb.execute("select channel from list where channel='%s'" % chan):
 			put("JOIN %s" % chan)
 
