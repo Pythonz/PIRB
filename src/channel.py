@@ -89,14 +89,14 @@ def devoice(nick,host,chan,arg):
 
 def ban(nick,host,chan,arg):
 	target = arg.split()[0][1:]
-	scut = arg.split()[0][1]
+	scut = arg.split()[0]
 	auth = getauth(nick)
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if wmatch(target, "*!*@*"):
-			if scut == "+":
+			if scut.startswith("+"):
 				entry = False
 				for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
 					entry = True
@@ -106,7 +106,7 @@ def ban(nick,host,chan,arg):
 					put("WHO %s" % chan)
 				else:
 					put("NOTICE %s :[%s] %s is already on the banlist" % (nick,chan,target))
-			elif scut == "-":
+			elif scut.startswith("-"):
 				entry = False
 				for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
 					entry = True
