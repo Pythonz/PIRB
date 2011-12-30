@@ -116,9 +116,11 @@ def ban(nick,host,chan,arg):
 					put("NOTICE %s :[%s] %s is not on the banlist" % (nick,chan,target))
 			else:
 				irc_send(nick,"$ban +/-*!*example@*.example.com")
-		else:
+		elif target == "":
 			for data in _chandb.execute("select ban from bans where channel='%s'" % chan):
 				irc_send(nick,"[%s] %s" % (chan,str(data[0])))
+		else:
+			irc_send(nick,"Invalid hostmask '%s'" % target)
 
 def exempt(nick,host,chan,arg):
 	target = arg.split()[0][1:]
@@ -151,9 +153,11 @@ def exempt(nick,host,chan,arg):
 					put("NOTICE %s :[%s] %s is not on the exemptlist" % (nick,chan,target))
 			else:
 				irc_send(nick,"$exempt +/-*!*example@*.example.com")
-		else:
+		elif target == "":
 			for data in _chandb.execute("select exempt from exempts where channel='%s'" % chan):
 				irc_send(nick,"[%s] %s" % (chan,str(data[0])))
+		else:
+			irc_send(nick,"Invalid hostmask '%s'" % target)
 
 def channel_modes(nick,host,chan,arg):
 	auth = getauth(nick)
