@@ -21,8 +21,8 @@ bind("on_topic","src_channel","raw","TOPIC")
 bind("on_mode","src_channel","raw","MODE")
 bind("ban","src_channel","pub","$ban")
 bind("bans","src_channel","pub","$bans")
-#bind("exempt","src_channel","pub","$exempt")
-#bind("exempts","src_channel","pub","$exempts")
+bind("exempt","src_channel","pub","$exempt")
+bind("exempts","src_channel","pub","$exempts")
 bind("op","src_channel","pub","$op")
 bind("deop","src_channel","pub","$deop")
 bind("voice","src_channel","pub","$voice")
@@ -128,6 +128,49 @@ def bans(nick,host,chan,arg):
 	hostflag = gethostflag(chan,hostmask)
 	if flag == "n" or flag == "o" or hostflag == "o":
 		for data in _chandb.execute("select ban from bans where channel='%s'" % chan):
+			irc_send(nick,"[%s] %s" % (chan,str(data[0])))
+
+def exempt(nick,host,chan,arg):
+	target = arg.split()[0][1:]
+	scut = arg.split()[0]
+	auth = getauth(nick)
+	flag = getflag(chan,auth)
+	hostmask = nick+"!"+host
+	hostflag = gethostflag(chan,hostmask)
+	if flag == "n" or flag == "o" or hostflag == "o":
+		if wmatch(target, "*!*@*"):
+			if scut.startswith("+"):
+				entry = False
+				for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
+					entry = True
+				if entry is False:
+					_chandb.execute("insert into exempts values ('%s','%s')" % (chan,target))
+					put("NOTICE %s :[%s] %s has been added to the exemptlist" % (nick,chan,target))
+					put("WHO %s" % chan)
+				else:
+					put("NOTICE %s :[%s] %s is already on the exemptlist" % (nick,chan,target))
+			elif scut.startswith("-"):
+				entry = False
+				for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
+					entry = True
+				if entry is True:
+					_chandb.execute("delete from exempts where channel='%s' and exempt='%s'" % (chan,target))
+					put("NOTICE %s :[%s] %s has been removed from the exemptlist" % (nick,chan,target))
+					put("MODE %s -b %s" % (chan,target))
+				else:
+					put("NOTICE %s :[%s] %s is not on the exemptlist" % (nick,chan,target))
+			else:
+				irc_send(nick,"Invalid syntax: $exempt +/-*!example@*.example.com")
+		else:
+			irc_send(nick,"Invalid hostmask '%s'" % arg)
+
+def exempts(nick,host,chan,arg):
+	auth = getauth(nick)
+	flag = getflag(chan,auth)
+	hostmask = nick+"!"+host
+	hostflag = gethostflag(chan,hostmask)
+	if flag == "n" or flag == "o" or hostflag == "o":
+		for data in _chandb.execute("select exempt from exempts where channel='%s'" % chan):
 			irc_send(nick,"[%s] %s" % (chan,str(data[0])))
 
 def channel_modes(nick,host,chan,arg):
