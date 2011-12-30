@@ -206,9 +206,11 @@ def on_mode(text):
 				put("MODE %s %s" % (text.split()[2],str(data[0])))
 
 def channel_invite(text):
-	chan = text.split()[3][1:]
-	for data in _chandb.execute("select channel from list where channel='%s'" % chan):
-		put("JOIN %s" % chan)
+	chan = text.split()[3]
+	if chan.startswith(":"):
+		chan = chan[1:]
+		for data in _chandb.execute("select channel from list where channel='%s'" % chan):
+			put("JOIN %s" % chan)
 
 def channel_addop(nick,host,chan,arg):
 	auth = getauth(nick)

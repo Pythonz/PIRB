@@ -30,12 +30,14 @@ def irc_bans(text):
 	for data in _chandb.execute("select ban from bans where channel='%s'" % chan):
 		if wmatch(host.lower(), str(data[0]).lower()):
 			entry = False
-			for data in _chandb.execute("select exempt from exempts where channel='%s'" % chan):
+			for data1 in _chandb.execute("select exempt from exempts where channel='%s'" % chan):
 				if wmatch(host.lower(), str(data[0]).lower()):
 					entry = True
 			if entry == False:
 				put("MODE %s +b %s" % (chan,data[0]))
 				put("KICK %s %s :Banned." % (chan,text.split()[7]))
+			elif entry == True:
+				put("MODE %s -b %s" % (chan,data[0]))
 
 def irc_ping(nick,host,chan,arg):
 	irc_send(chan,"Last ping was recieved %s minutes ago." % _timeout)
