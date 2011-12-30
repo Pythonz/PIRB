@@ -34,7 +34,7 @@ def irc_bans(text):
 				if wmatch(host.lower(), str(data1[0]).lower()):
 					entry = True
 				for botnick in _cache.execute("select name from botnick"):
-					if str(text.split()[7]).lower() == str(botnick[0]).lower():
+					if str(text.split()[7]).lower() == str(text.split()[2]).lower():
 						entry = True
 			if entry == False:
 				put("MODE %s +b %s" % (chan,data[0]))
