@@ -20,8 +20,9 @@ bind("channel_topic","src_channel","pub","$topic")
 bind("on_topic","src_channel","raw","TOPIC")
 bind("on_mode","src_channel","raw","MODE")
 bind("ban","src_channel","pub","$ban")
-bind("unban","src_channel","pub","$unban")
 bind("bans","src_channel","pub","$bans")
+#bind("exempt","src_channel","pub","$exempt")
+#bind("exempts","src_channel","pub","$exempts")
 bind("op","src_channel","pub","$op")
 bind("deop","src_channel","pub","$deop")
 bind("voice","src_channel","pub","$voice")
@@ -80,37 +81,30 @@ def ban(nick,host,chan,arg):
 	hostflag = gethostflag(chan,hostmask)
 	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
 		if wmatch(target, "*!*@*"):
-			entry = False
-			for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
-				entry = True
-			if entry is False:
-				_chandb.execute("insert into bans values ('%s','%s')" % (chan,target))
-				put("NOTICE %s :[%s] %s has been added to the banlist" % (nick,chan,target))
-				put("WHO %s" % chan)
+			if target.startswith("+"):
+				entry = False
+				for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
+					entry = True
+				if entry is False:
+					_chandb.execute("insert into bans values ('%s','%s')" % (chan,target))
+					put("NOTICE %s :[%s] %s has been added to the banlist" % (nick,chan,target))
+					put("WHO %s" % chan)
+				else:
+					put("NOTICE %s :[%s] %s is already on the banlist" % (nick,chan,target))
+			elif target.startswith("-"):
+				entry = False
+				for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
+					entry = True
+				if entry is True:
+					_chandb.execute("delete from bans where channel='%s' and ban='%s'" % (chan,target))
+					put("NOTICE %s :[%s] %s has been removed from the banlist" % (nick,chan,target))
+					put("MODE %s -b %s" % (chan,target))
+				else:
+					put("NOTICE %s :[%s] %s is not on the banlist" % (nick,chan,target))
 			else:
-				put("NOTICE %s :[%s] %s is already on the banlist" % (nick,chan,target))
+				irc_send(nick,"Invalid syntax: $ban +/-*!example@*.example.com")
 		else:
 			irc_send(nick,"Invalid hostmask '%s'" % arg)
-
-def unban(nick,host,chan,arg):
-	target = arg.split()[0]
-	auth = getauth(nick)
-	flag = getflag(chan,auth)
-	hostmask = nick+"!"+host
-	hostflag = gethostflag(chan,hostmask)
-	if flag == "n" or flag == "o" or hostflag == "n" or hostflag == "o":
-		if wmatch(target, "*!*@*"):
-			entry = False
-			for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
-				entry = True
-			if entry is True:
-				_chandb.execute("delete from bans where channel='%s' and ban='%s'" % (chan,target))
-				put("NOTICE %s :[%s] %s has been removed from the banlist" % (nick,chan,target))
-				put("MODE %s -b %s" % (chan,target))
-			else:
-				put("NOTICE %s :[%s] %s is not on the banlist" % (nick,chan,target))
-		else:
-			irc_send(nick,"Invalid hostmask '%s'" % target)
 
 def bans(nick,host,chan,arg):
 	auth = getauth(nick)
