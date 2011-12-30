@@ -281,6 +281,7 @@ if __name__ == '__main__':
 				_chan.execute("create table channel(channel text, auth text, flags text)")
 				_chan.execute("create table info(channel text, topic text, modes text)")
 				_chan.execute("create table bans(channel text, ban text)")
+				_chan.execute("create table exempts(channel text, exempt text)")
 				_cache.execute("create table src(name text)")
 				_cache.execute("create table modules(name text)")
 				_cache.execute("create table binds(name text, module text, event text, command text)")
