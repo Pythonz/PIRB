@@ -4,6 +4,7 @@ import os
 bind("uname","src_system","pub","$uname")
 
 def uname(nick,host,chan,arg):
-	put("PRIVMSG %s :%s" % (chan, ' '.join(os.uname())))
+	sysinfo = ' '.join(os.uname())
+	put("PRIVMSG %s :%s" % (chan, sysinfo))
 
 import run
