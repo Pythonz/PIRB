@@ -1,4 +1,5 @@
 from run import bind,put,putf,c
+from src.irc import irc_send
 import os
 
 bind("uname","src_system","pub","$uname")
