@@ -26,6 +26,7 @@ bind("deop","src_channel","pub","$deop")
 bind("voice","src_channel","pub","$voice")
 bind("devoice","src_channel","pub","$devoice")
 bind("kick","src_channel","pub","$kick")
+bind("invite","src_channel","pub","$invite")
 
 def getflag(chan,auth):
 	for data in _chandb.execute("select flags from channel where channel='%s' and auth='%s'" % (chan,auth)):
@@ -48,6 +49,15 @@ def kick(nick,host,chan,arg):
 			if len(arg.split()) != 1:
 				reason = ' '.join(arg.split()[1:])
 			put("KICK %s %s :%s" % (chan,target,reason))
+
+def invite(nick,host,chan,arg):
+	auth = getauth(nick)
+	flag = getflag(chan,auth)
+	hostmask = nick+"!"+host
+	hostflag = gethostflag(chan,hostmask)
+	if flag == "n" or flag == "o" or hostflag == "o":
+		for user in arg.split():
+			put("INVITE %s %s" % (user,chan))
 
 def op(nick,host,chan,arg):
 	auth = getauth(nick)
