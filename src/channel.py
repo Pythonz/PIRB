@@ -176,7 +176,7 @@ def channel_topic(nick,host,chan,arg):
 def on_topic(text):
 	nick = text.split()[0][1:].split("!")[0]
 	for mynick in _cache.execute("select name from botnick"):
-		if nick != str(mynick[0]):
+		if nick != str(mynick[0]) and nick != "Q" and nick != "ChanServ":
 			for data in _chandb.execute("select topic from info where channel='%s'" % text.split()[2]):
 				put("TOPIC %s :%s" % (text.split()[2],str(data[0])))
 
