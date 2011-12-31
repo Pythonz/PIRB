@@ -65,8 +65,11 @@ def op(nick,host,chan,arg):
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
 	if flag == "n" or flag == "o" or hostflag == "o":
-		mode = "o"*len(arg.split())
-		putf("MODE %s +%s %s" % (chan,mode,arg))
+		if len(arg.split()) != 0:
+			mode = "o"*len(arg.split())
+			putf("MODE %s +%s %s" % (chan,mode,arg))
+		else:
+			putf("MODE %s +o %s" % (chan,nick))
 
 def deop(nick,host,chan,arg):
 	auth = getauth(nick)
@@ -74,8 +77,11 @@ def deop(nick,host,chan,arg):
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
 	if flag == "n" or flag == "o" or hostflag == "o":
-		mode = "o"*len(arg.split())
-		putf("MODE %s -%s %s" % (chan,mode,arg))
+		if len(arg.split()) != 0:
+			mode = "o"*len(arg.split())
+			putf("MODE %s -%s %s" % (chan,mode,arg))
+		else:
+			putf("MODE %s -o %s" % (chan,nick))
 
 def voice(nick,host,chan,arg):
 	auth = getauth(nick)
@@ -83,8 +89,11 @@ def voice(nick,host,chan,arg):
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
 	if flag == "n" or flag == "o" or hostflag == "o":
-		mode = "v"*len(arg.split())
-		putf("MODE %s +%s %s" % (chan,mode,arg))
+		if len(arg.split()) != 0:
+			mode = "v"*len(arg.split())
+			putf("MODE %s +%s %s" % (chan,mode,arg))
+		else:
+			putf("MODE %s +v %s" % (chan,nick))
 
 def devoice(nick,host,chan,arg):
 	auth = getauth(nick)
@@ -92,8 +101,11 @@ def devoice(nick,host,chan,arg):
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
 	if flag == "n" or flag == "o" or hostflag == "o":
-		mode = "v"*len(arg.split())
-		putf("MODE %s -%s %s" % (chan,mode,arg))
+		if len(arg.split()) != 0:
+			mode = "v"*len(arg.split())
+			putf("MODE %s -%s %s" % (chan,mode,arg))
+		else:
+			putf("MODE %s -v %s" % (chan,nick))
 
 def ban(nick,host,chan,arg):
 	target = arg.split()[0][1:]
