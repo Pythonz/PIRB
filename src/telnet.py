@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from run import bind,put,putf,c
+from run import bind,put,putf,c,printe,printa,printc
 import thread,socket,ConfigParser
 
 class Telnet:
@@ -14,7 +14,6 @@ class Telnet:
 				rc.bind((self.ip, int(self.port)))
 
 			rc.listen(100)
-			print "bound to %s:%s" % (self.ip, self.port)
 			while 1:
 				(client, address) = rc.accept()
 				thread.start_new_thread(self.client,(client,))
@@ -51,7 +50,7 @@ class Telnet:
 					else:
 						self.send(sock,"unknown command '%s'. try 'help'" % cmd)
 
-		except Exception,e: print(e)
+		except Exception,e: printe(e)
 
 thread.start_new_thread(Telnet().run,())
 
