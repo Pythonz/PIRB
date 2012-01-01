@@ -44,6 +44,9 @@ class Telnet:
 					if cmd == "put":
 						putf(data[4:])
 						self.send(sock,"Sent: %s" % data[4:])
+					if cmd == "restart":
+						self.send(sock,"Restarting ...")
+						s.close()
 					elif cmd == "quit":
 						self.send(sock,"Bye :(")
 						sock.close()
