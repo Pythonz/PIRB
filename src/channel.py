@@ -338,11 +338,11 @@ def channel_listuser(nick,host,chan,arg):
 	for owner in _chandb.execute("select auth from channel where channel='%s' and flags='n'" % chan):
 		put("NOTICE %s :[%s] %s is the owner" % (nick,chan,owner[0]))
 	op = _chandb.execute("select auth from channel where channel='%s' and flags='o'" % chan)
-	operators = ', '.join(set(str(op.fetchall())))
-	put("NOTICE %s :[%s] Operators: %s" % (nick,chan,operators))
+	operators = ' '.join(set(str(op.fetchall())))
+	put("NOTICE %s :[%s] Operators: %s" % (nick,chan,op.fetchall()))
 	v = _chandb.execute("select auth from channel where channel='%s' and flags='v'" % chan)
-	voices = ', '.join(set(str(v.fetchall())))
-	put("NOTICE %s :[%s] %s is a voice" % (nick,chan,voices))
+	voices = ' '.join(set(str(v.fetchall())))
+	put("NOTICE %s :[%s] %s is a voice" % (nick,chan,v.fetchall()))
 
 def channel_join(text):
 	putf("JOIN %s" % c.get("BOT", "channels"))
