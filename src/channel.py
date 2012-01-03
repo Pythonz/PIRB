@@ -12,7 +12,7 @@ bind("channel_addop","src_channel","pub","$addop")
 bind("channel_delop","src_channel","pub","$delop")
 bind("channel_addvoice","src_channel","pub","$addvoice")
 bind("channel_delvoice","src_channel","pub","$delvoice")
-bind("channel_listuser","src_channel","pub","$listuser")
+bind("channel_listuser","src_channel","pub","$users")
 bind("channel_auth","src_channel","pub","$auth")
 bind("channel_invite","src_channel","raw","INVITE")
 bind("channel_modes","src_channel","pub","$mode")
@@ -337,8 +337,8 @@ def channel_delvoice(nick,host,chan,arg):
 def channel_listuser(nick,host,chan,arg):
 	for owner in _chandb.execute("select auth from channel where channel='%s' and flags='n'" % chan):
 		put("NOTICE %s :[%s] %s is the owner" % (nick,chan,owner[0]))
-	for operator in _chandb.execute("select auth from channel where channel='%s' and flags='o'" % chan):
-		put("NOTICE %s :[%s] %s is an operator" % (nick,chan,operator[0]))
+	operators = ' '.join(str(_chandb.execute("select auth from channel where channel='%s' and flags='o'" % chan)))
+	put("NOTICE %s :[%s] Operators: %s" % (nick,chan,operators))
 	for voice in _chandb.execute("select auth from channel where channel='%s' and flags='v'" % chan):
 		put("NOTICE %s :[%s] %s is a voice" % (nick,chan,voice[0]))
 
