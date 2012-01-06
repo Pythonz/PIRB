@@ -192,8 +192,8 @@ def main():
 										src_reload.append(name)
 										exec("reload(src_%s)" % name)
 										printa("src %s reloaded" % name)
-							put("NOTICE %s :[src] %s reloaded" % (nick,' '.join(src_load)))
-							put("NOTICE %s :[src] %s loaded" % (nick,' '.join(src_reload)))
+							put("NOTICE %s :[src] %s loaded" % (nick,' '.join(src_load)))
+							put("NOTICE %s :[src] %s reloaded" % (nick,' '.join(src_reload)))
 							for loaded in _cache.execute("select name from modules"):
 								loaded = loaded[0]
 								if not os.access("modules/%s.py" % loaded, os.F_OK):
