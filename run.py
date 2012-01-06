@@ -201,7 +201,7 @@ def main():
 									exec("del %s" % loaded)
 									_cache.execute("delete from modules where name='%s'" % loaded)
 									printa("module %s unloaded" % loaded)
-							put("NOTICE %s :[module] %s unloaded" % ', '.join(mod_unload))
+							put("NOTICE %s :[module] %s unloaded" % (nick,', '.join(mod_unload)))
 							for source in os.listdir("modules"):
 								if source != "__init__.py" and source.endswith(".py"):
 									name = source.split(".py")[0]
