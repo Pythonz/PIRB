@@ -149,22 +149,34 @@ def main():
 								put("NOTICE %s :[BIND] Function: %s, Module: %s, Event: %s, Command: %s" % (nick,str(binds[0]),str(binds[1]),str(binds[2]),str(binds[3])))
 					if arg.split()[0].lower() == "loaded" and line.split()[2][0] != "#":
 						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
+							load = list()
 							for loaded in _cache.execute("select name from src"):
-								put("NOTICE %s :[src] %s" % (nick,loaded[0]))
+								load.append(loaded[0])
+							put("NOTICE %s :[src] %s" % (nick,', '.join(load)))
+							load = list()
 							for loaded in _cache.execute("select name from modules"):
-								put("NOTICE %s :[module] %s" % (nick,loaded[0]))
+								load.append(loaded[0])
+							put("NOTICE %s :[module] %s" % (nick,', '.join(load)))
 					if arg.split()[0].lower() == "reload" and line.split()[2][0] != "#":
 						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
 							c.read("configs/main.conf")
 							put("NOTICE %s :[run] config reloaded" % nick)
 							_cache.execute("delete from binds")
+							src_load = list()
+							src_reload = list()
+							src_unload = list()
+							mod_load = list()
+							mod_reload = list()
+							mod_unload = list()
 							for loaded in _cache.execute("select name from src"):
 								loaded = loaded[0]
 								if not os.access("src/%s.py" % loaded, os.F_OK):
+									src_unload.append(loaded)
 									exec("del src_%s" % loaded)
 									_cache.execute("delete from src where name='%s'" % loaded)
 									printa("src %s unloaded" % loaded)
-									put("NOTICE %s :[src] %s unloaded" % (nick,loaded))
+									
+							put("NOTICE %s :[src] %s unloaded" % (nick,' '.join(src_unload)))
 							for source in os.listdir("src"):
 								if source != "__init__.py" and source.endswith(".py"):
 									name = source.split(".py")[0]
@@ -172,21 +184,24 @@ def main():
 									for loaded in _cache.execute("select name from src where name='%s'" % name):
 										entry = True
 									if entry is False:
+										src_load.append(name)
 										exec("from src import %s as src_%s" % (name,name))
 										_cache.execute("insert into src values ('%s')" % name)
 										printa("src %s loaded" % name)
-										put("NOTICE %s :[src] %s loaded" % (nick,name))
 									else:
+										src_reload.append(name)
 										exec("reload(src_%s)" % name)
 										printa("src %s reloaded" % name)
-										put("NOTICE %s :[src] %s reloaded" % (nick,name))
+							put("NOTICE %s :[src] %s reloaded" % (nick,' '.join(src_load)))
+							put("NOTICE %s :[src] %s loaded" % (nick,' '.join(src_reload)))
 							for loaded in _cache.execute("select name from modules"):
 								loaded = loaded[0]
 								if not os.access("modules/%s.py" % loaded, os.F_OK):
+									mod_unload.append(loaded)
 									exec("del %s" % loaded)
 									_cache.execute("delete from modules where name='%s'" % loaded)
 									printa("module %s unloaded" % loaded)
-									put("NOTICE %s :[module] %s unloaded" % loaded)
+							put("NOTICE %s :[module] %s unloaded" % ' '.join(mod_unload))
 							for source in os.listdir("modules"):
 								if source != "__init__.py" and source.endswith(".py"):
 									name = source.split(".py")[0]
@@ -194,14 +209,16 @@ def main():
 									for loaded in _cache.execute("select name from modules where name='%s'" % name):
 										entry = True
 									if entry is False:
+										mod_load.append(name)
 										exec("from modules import %s" % name)
 										_cache.execute("insert into modules values ('%s')" % name)
 										printa("module %s loaded" % name)
-										put("NOTICE %s :[module] %s loaded" % (nick,name))
 									else:
+										mod_reload.append(name)
 										exec("reload(%s)" % name)
 										printa("module %s reloaded" % name)
-										put("NOTICE %s :[module] %s reloaded" % (nick,name))
+							put("NOTICE %s :[module] %s loaded" % (nick,' '.join(mod_load)))
+							put("NOTICE %s :[module] %s reloaded" % (nick,' '.join(mod_reload)))
 					if arg.split()[0].lower() == "restart" and line.split()[2][0] != "#":
 						if src_user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
 							put("NOTICE %s :Restarting ..." % nick)
