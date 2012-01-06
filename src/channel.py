@@ -337,12 +337,16 @@ def channel_delvoice(nick,host,chan,arg):
 def channel_listuser(nick,host,chan,arg):
 	for owner in _chandb.execute("select auth from channel where channel='%s' and flags='n'" % chan):
 		put("NOTICE %s :[%s] %s is the owner" % (nick,chan,owner[0]))
-	op = _chandb.execute("select auth from channel where channel='%s' and flags='o'" % chan)
-	operators = ' '.join(set(str(op.fetchall())))
+	op = list()
+	for operator in _chandb.execute("select auth from channel where channel='%s' and flags='o'" % chan):
+		op.append(str(operator[0]))
+	operators = ' '.join(op)
 	put("NOTICE %s :[%s] Operators: %s" % (nick,chan,operators))
-	v = _chandb.execute("select auth from channel where channel='%s' and flags='v'" % chan)
-	voices = ' '.join(set(str(v.fetchall())))
-	put("NOTICE %s :[%s] %s is a voice" % (nick,chan,voices))
+	v = list()
+	for voice in _chandb.execute("select auth from channel where channel='%s' and flags='v'" % chan):
+		v.append(str(voice[0]))
+	voices = ', '.join(v)
+	put("NOTICE %s :[%s] Voices: %s" % (nick,chan,voices))
 
 def channel_join(text):
 	putf("JOIN %s" % c.get("BOT", "channels"))
