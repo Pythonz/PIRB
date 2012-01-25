@@ -1,4 +1,4 @@
-from run import put,putf,bind,c,printa,printc,printe
+from run import put,putf,bind,c,printa,printc,printe,whois,whochan
 from src.user import getauth
 from fnmatch import fnmatch as wmatch
 from src.irc import irc_send
@@ -123,7 +123,7 @@ def ban(nick,host,chan,arg):
 				if entry is False:
 					_chandb.execute("insert into bans values ('%s','%s')" % (chan,target))
 					put("NOTICE %s :[%s] %s has been added to the banlist" % (nick,chan,target))
-					put("WHO %s" % chan)
+					whochan(chan)
 				else:
 					put("NOTICE %s :[%s] %s is already on the banlist" % (nick,chan,target))
 			elif scut.startswith("-"):
@@ -158,7 +158,7 @@ def exempt(nick,host,chan,arg):
 				if entry is False:
 					_chandb.execute("insert into exempts values ('%s','%s')" % (chan,target))
 					put("NOTICE %s :[%s] %s has been added to the exemptlist" % (nick,chan,target))
-					put("WHO %s" % chan)
+					whochan(chan)
 				else:
 					put("NOTICE %s :[%s] %s is already on the exemptlist" % (nick,chan,target))
 			elif scut.startswith("-"):
@@ -382,10 +382,7 @@ def channel_drop(nick,uhost,arg):
 
 def on_join_chan(text):
 	nick = text.split()[0][1:].split("!")[0]
-	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
-		putf("WHO %s \%nat,111" % nick)
-	else:
-		putf("WHO %s" % nick)
+	whois(nick)
 	hostmask = text.split()[0][1:]
 	if text.split()[2].startswith(":"):
 		chan = text.split()[2][1:]

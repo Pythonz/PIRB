@@ -55,6 +55,18 @@ def putf(arg):
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
+def whois(nick):
+	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
+		put("WHO %s %%s" % (nick, "nat,111"))
+	else:
+		put("WHOIS %s" % nick)
+
+def whochan(channel):
+	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
+		put("WHO %s %%s" % (channel, "nat,111"))
+	else:
+		put("WHO %s" % channel)
+
 def keepnick():
 	try:
 		sleep(60)
