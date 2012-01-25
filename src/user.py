@@ -30,14 +30,15 @@ def whois_307(text):
 
 def who_354(text):
 	if text.split()[3] == "111":
-		_userdb.execute("delete from auth where nick='%s'" % text.split()[4])
-		_userdb.execute("insert into auth values ('%s','%s')" % (text.split()[4], text.split()[5]))
+		_userdb.execute("delete from auth where nick='%s'" % text.split()[6])
+		_userdb.execute("insert into auth values ('%s','%s')" % (text.split()[6], text.split()[7]))
 
 def check_user(text):
-	whois(text.split()[7])
+	if not c.get("SERVER", "address").lower().endswith(".quakenet.org"):
+		whois(text.split()[7])
 
 def on_366(text):
-	whois(text.split()[3])
+	whochan(text.split()[3])
 
 def on_nickchange(text):
 	for data in _cache.execute("select name from botnick"):

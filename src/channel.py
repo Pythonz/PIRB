@@ -410,4 +410,24 @@ def channel_auth(nick,host,chan,arg):
 	if flag == "v" or hostflag == "v":
 		putf("MODE %s +v %s" % (chan,nick))
 
+def channel_msg_auth(nick,host,arg):
+	if len(arg) == 0:
+		irc_send(nick, "no channel specified")
+	elif arg.startswith("#"):
+		whois(nick)
+		chan = arg.split()[0]
+		put("NOTICE %s :[%s] Trying to auth ..." % (nick,chan))
+		auth = getauth(nick)
+		hostmask = nick+"!"+host
+		put("NOTICE %s :[%s] Getting flag for %s (%s)..." % (nick,chan,auth,hostmask))
+		flag = getflag(chan,auth)
+		hostflag = gethostflag(chan,hostmask)
+		put("NOTICE %s :[%s] Flag: %s, Hostflag: %s" % (nick,chan,flag,hostflag))
+		if flag == "n" or flag == "o" or hostflag == "o":
+			putf("MODE %s +o %s" % (chan,nick))
+		if flag == "v" or hostflag == "v":
+			putf("MODE %s +v %s" % (chan,nick))
+	else:
+		irc_send(nick, "invalid channel")
+
 import run
