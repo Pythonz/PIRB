@@ -30,8 +30,8 @@ def whois_307(text):
 
 def who_354(text):
 	if text.split()[3] == "111":
-		_userdb.execute("delete from auth where nick='%s'" % text.split()[6])
-		_userdb.execute("insert into auth values ('%s','%s')" % (text.split()[6], text.split()[7]))
+		_userdb.execute("delete from auth where nick='%s'" % text.split()[4])
+		_userdb.execute("insert into auth values ('%s','%s')" % (text.split()[4], text.split()[5]))
 
 def check_user(text):
 	if not c.get("SERVER", "address").lower().endswith(".quakenet.org"):
