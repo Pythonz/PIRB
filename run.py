@@ -57,13 +57,13 @@ def putf(arg):
 
 def whois(nick):
 	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
-		put("WHO %s &#37;nat,111" % nick)
+		put("WHO %s \\%nat,111" % nick)
 	else:
 		put("WHOIS %s" % nick)
 
 def whochan(channel):
 	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
-		put("WHO %s &#37;nat,111" % channel)
+		put("WHO %s \\%nat" % channel)
 	else:
 		put("WHO %s" % channel)
 
