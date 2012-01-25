@@ -397,6 +397,7 @@ def on_join_chan(text):
 		putf("MODE %s +v %s" % (chan,nick))
 
 def channel_auth(nick,host,chan,arg):
+	whois(nick)
 	put("NOTICE %s :[%s] Trying to auth ..." % (nick,chan))
 	auth = getauth(nick)
 	hostmask = nick+"!"+host

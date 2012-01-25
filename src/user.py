@@ -50,7 +50,6 @@ def on_nickchange(text):
 	whois(text.split()[2])
 
 def getauth(nick):
-	whois(nick)
 	for data in _userdb.execute("select auth from auth where nick='%s'" % nick):
 		return data[0]
 
