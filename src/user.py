@@ -48,7 +48,10 @@ def on_nickchange(text):
 		_cache.execute("update botnick set name='%s'" % _botnick)
 		put("NICK %s" % _botnick)
 	_userdb.execute("delete from auth where nick='%s'" % text.split()[0][1:].split("!")[0])
-	whois(text.split()[2])
+	if text.split()[2].startswith(":"):
+		whois(text.split()[2][1:])
+	else:
+		whois(text.split()[2])
 
 def getauth(nick):
 	for data in _userdb.execute("select auth from auth where nick='%s'" % nick):
