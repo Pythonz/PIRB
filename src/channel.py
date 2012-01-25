@@ -382,7 +382,10 @@ def channel_drop(nick,uhost,arg):
 
 def on_join_chan(text):
 	nick = text.split()[0][1:].split("!")[0]
-	putf("WHO %s" % nick)
+	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
+		putf("WHO %s %nat,111" % nick)
+	else:
+		putf("WHO %s" % nick)
 	hostmask = text.split()[0][1:]
 	if text.split()[2].startswith(":"):
 		chan = text.split()[2][1:]
