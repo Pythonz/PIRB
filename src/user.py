@@ -35,13 +35,13 @@ def who_354(text):
 
 def check_user(text):
 	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
-		put("WHO %s %nat,111" % text.split()[7])
+		put("WHO %s \%nat,111" % text.split()[7])
 	else:
 		put("WHOIS %s" % text.split()[7])
 
 def on_366(text):
 	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
-		put("WHO %s %nat,111" % text.split()[3])
+		put("WHO %s \%nat,111" % text.split()[3])
 	else:
 		put("WHO %s" % text.split()[3])
 
@@ -54,13 +54,13 @@ def on_nickchange(text):
 		put("NICK %s" % _botnick)
 	_userdb.execute("delete from auth where nick='%s'" % text.split()[0][1:].split("!")[0])
 	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
-		put("WHO %s %nat,111" % text.split()[2])
+		put("WHO %s \%nat,111" % text.split()[2])
 	else:
 		put("WHOIS %s" % text.split()[2])
 
 def getauth(nick):
 	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
-		putf("WHO %s %nat,111" % nick)
+		putf("WHO %s \%nat,111" % nick)
 	else:
 		putf("WHOIS %s" % nick)
 	for data in _userdb.execute("select auth from auth where nick='%s'" % nick):
