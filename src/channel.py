@@ -346,7 +346,7 @@ def channel_listuser(nick,host,chan,arg):
 	v = list()
 	for voice in _chandb.execute("select auth from channel where channel='%s' and flags='v'" % chan):
 		v.append(str(voice[0]))
-	voices = ', '.join(v)
+	voices = ' '.join(v)
 	put("NOTICE %s :[%s] Voices: %s" % (nick,chan,voices))
 
 def channel_join(text):
