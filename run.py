@@ -140,7 +140,6 @@ def main():
 			line=s.recv(8096)
 			for line in line.rstrip().split("\n"):
 				reg = line.rstrip()
-				open("logs/%s.log" % c.get("SERVER", "address"), "ab").write("%s\n" % reg)
 				printc(line.rstrip())
 				if line.split()[1] == ":Closing":
 					printa("connection closed by server")
