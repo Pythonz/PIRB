@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from run import bind,put,putf,c,printe,printa,printc
-import thread,socket,ConfigParser
+import thread,socket,ConfigParser,hashlib
 
 class Telnet:
 	def __init__(self):
@@ -39,8 +39,10 @@ class Telnet:
 				data = raw.rstrip()
 				if data != "":
 					cmd = data.split()[0]
-					if cmd == "say":
-						self.send(sock,"%s" % data[4:])
+					if cmd == "crypt":
+						sha = hashlib.sha1()
+						sha.update(data[6:])
+						self.send(sock,"Hash: %s" % str(sha.hexdigest()))
 					elif cmd == "put":
 						putf(data[4:])
 						self.send(sock,"Sent: %s" % data[4:])
