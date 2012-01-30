@@ -142,11 +142,12 @@ def main():
 			for line in line.rstrip().split("\n"):
 				reg = line.rstrip()
 				printc(line.rstrip())
-				if line.split()[0] == "ERROR":
+				if line.split()[1] == ":Closing":
 					s.close()
+					return 0
 					break
 				if line.split()[0]=='PING':
-					mail('PONG '+line.split()[1])
+					mail('PONG '+line[5:])
 					__builtin__._timeout = 0
 				line = line.rstrip()[1:]
 				if line.split()[1].lower() == "privmsg":
@@ -287,6 +288,7 @@ def main():
 			s.close()
 			printe("PING TIMEOUT! RESTARTING ...")
 			break
+	s.close()
 	_userdb.close()
 	_chandb.close()
 	_cache.close()
