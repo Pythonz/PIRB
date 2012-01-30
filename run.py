@@ -144,6 +144,7 @@ def main():
 				if line.split()[0] == "ERROR":
 					printa("connection closed by server")
 					printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
+					s.close()
 					break
 				if line.split()[0]=='PING':
 					mail('PONG '+line.split()[1])
