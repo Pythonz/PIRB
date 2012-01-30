@@ -16,7 +16,8 @@ def printc(text):
 	print "\033[1m\033[32m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
 
 def printe(text):
-	print "\033[1m\033[31m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
+	if c.getboolean("BOT", "debug"):
+		print "\033[1m\033[31m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
 
 c = ConfigParser.RawConfigParser()
 c.read("configs/main.conf")
@@ -342,6 +343,7 @@ if __name__ == '__main__':
 				c.set("BOT", "username", raw_input(cadd+"Username (ident): "+cdel))
 				c.set("BOT", "realname", raw_input(cadd+"Realname: "+cdel))
 				c.set("BOT", "channels", raw_input(cadd+"Channels to join on startup (seperate with ,): "+cdel))
+				c.set("BOT", "debug", raw_input(cadd+"Debug (True/False): "+cdel))
 				printc("So lets go to the management... The admin settings:")
 				c.set("ADMIN", "password", raw_input(cadd+"Password to use admin commands: "+cdel))
 				c.set("ADMIN", "auth", raw_input(cadd+"Auth (nickserv nick or quakenet auth, replaces password at some commands): "+cdel))
