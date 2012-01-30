@@ -143,6 +143,7 @@ def main():
 				reg = line.rstrip()
 				printc(line.rstrip())
 				if line.split()[0] == "ERROR":
+					s.close()
 					break
 				if line.split()[0]=='PING':
 					mail('PONG '+line.split()[1])
