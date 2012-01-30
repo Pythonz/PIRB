@@ -136,7 +136,7 @@ def main():
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
-	while True:
+	while 1:
 		try:
 			line=s.recv(8096)
 			for line in line.rstrip().split("\n"):
@@ -279,6 +279,7 @@ def main():
 						elif command == "":
 							exec("""%s.%s("%s")""" % (module, hook, reg))
 		except Exception,e: printe(e)
+		except socket.error: break
 		except KeyboardInterrupt:
 			printe("\nAborting ... CTRL + C")
 			sys.exit(2)
@@ -286,7 +287,6 @@ def main():
 			s.close()
 			printe("PING TIMEOUT! RESTARTING ...")
 			break
-	s.close()
 	_userdb.close()
 	_chandb.close()
 	_cache.close()
