@@ -64,7 +64,7 @@ def whois(nick):
 
 def whochan(channel):
 	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
-		putf("WHO %s %snat" % (channel, "%"))
+		putf("WHO %s %snat,111" % (channel, "%"))
 		putf("WHO %s" % channel)
 	else:
 		putf("WHO %s" % channel)
