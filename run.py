@@ -274,7 +274,7 @@ def main():
 							exec("""%s.%s("%s")""" % (module, hook, reg))
 						elif command == "":
 							exec("""%s.%s("%s")""" % (module, hook, reg))
-				if line.split()[1] == ":Closing":
+				if line.split()[0] == "ERROR":
 					printa("connection closed by server")
 					printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
 					break
