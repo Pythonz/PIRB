@@ -141,10 +141,6 @@ def main():
 			for line in line.rstrip().split("\n"):
 				reg = line.rstrip()
 				printc(line.rstrip())
-				if line.split()[1] == ":Closing":
-					printa("connection closed by server")
-					printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
-					break
 				if line.split()[0]=='PING':
 					mail('PONG '+line.split()[1])
 					__builtin__._timeout = 0
@@ -278,11 +274,15 @@ def main():
 							exec("""%s.%s("%s")""" % (module, hook, reg))
 						elif command == "":
 							exec("""%s.%s("%s")""" % (module, hook, reg))
+				if line.split()[1] == ":Closing":
+					printa("connection closed by server")
+					printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
+					break
 		except Exception,e: printe(e)
 		except KeyboardInterrupt:
 			printe("\nAborting ... CTRL + C")
 			sys.exit(2)
-		if _timeout == "10":
+		if _timeout > "10" or _timeout == "10":
 			s.close()
 			printe("PING TIMEOUT! RESTARTING ...")
 			break
