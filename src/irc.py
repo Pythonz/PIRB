@@ -5,7 +5,6 @@ from fnmatch import fnmatch as wmatch
 bind("irc_botnick","src_irc","pub","$botnick")
 bind("irc_botmode","src_irc","raw","001")
 bind("irc_bans","src_irc","raw","352")
-bind("irc_ping","src_irc","pub","$timeout")
 
 def irc_botnick(nick,host,chan,arg):
 	for data in _cache.execute("select name from botnick"):
@@ -39,8 +38,5 @@ def irc_bans(text):
 			if entry == False:
 				put("MODE %s +b %s" % (chan,data[0]))
 				put("KICK %s %s :Banned." % (chan,text.split()[7]))
-
-def irc_ping(nick,host,chan,arg):
-	irc_send(chan,"Last ping was recieved %s minutes ago." % _timeout)
 
 import run

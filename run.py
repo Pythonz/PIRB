@@ -151,6 +151,9 @@ def main():
 	while 1:
 		try:
 			line=s.recv(8096)
+			if not line:
+				disconnect()
+				return 0
 			for line in line.rstrip().split("\n"):
 				reg = line.rstrip()
 				printc(line.rstrip())
@@ -297,10 +300,6 @@ def main():
 		except KeyboardInterrupt:
 			printe("\nAborting ... CTRL + C")
 			sys.exit(2)
-		if _timeout > "10" or _timeout == "10":
-			printe("PING TIMEOUT! RESTARTING ...")
-			disconnect()
-			return 0
 
 if __name__ == '__main__':
 	try:
