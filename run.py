@@ -10,10 +10,12 @@ sys.path.append("modules")
 sys.path.append("src")
 
 def printa(text):
-	print "\033[1m\033[34m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
+	if text:
+		print "\033[1m\033[34m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
 
 def printc(text):
-	print "\033[1m\033[32m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
+	if text:
+		print "\033[1m\033[32m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
 
 def printe(text):
 	if c.getboolean("BOT", "debug"):
