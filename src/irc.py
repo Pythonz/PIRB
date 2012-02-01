@@ -2,9 +2,10 @@ from run import put,putf,bind,c,printa,printc,printe
 from time import sleep
 from fnmatch import fnmatch as wmatch
 
-bind("irc_botnick","src_irc","pub","$botnick")
-bind("irc_botmode","src_irc","raw","001")
-bind("irc_bans","src_irc","raw","352")
+def load():
+	bind("irc_botnick","src_irc","pub","$botnick")
+	bind("irc_botmode","src_irc","raw","001")
+	bind("irc_bans","src_irc","raw","352")
 
 def irc_botnick(nick,host,chan,arg):
 	for data in _cache.execute("select name from botnick"):

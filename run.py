@@ -104,11 +104,6 @@ def disconnect():
 		sys.exit(2)
 
 def main():
-	global s
-	global _botnick
-	global _cache
-	global _userdb
-	global _chandb
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -127,11 +122,13 @@ def main():
 		for source in os.listdir("src"):
 			if source != "__init__.py" and source.endswith(".py"):
 				exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
+				exec("src_%s.load()" % source.split(".py")[0])
 				_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
 				printa("src %s loaded" % source.split(".py")[0])
 		for mod in os.listdir("modules"):
 			if mod != "__init__.py" and mod.endswith(".py"):
 				exec("from modules import %s" % mod.split(".py")[0])
+				exec("%s.load()" % mod.split(".py")[0])
 				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 				printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
@@ -207,11 +204,13 @@ def main():
 									if entry is False:
 										src_load.append(name)
 										exec("from src import %s as src_%s" % (name,name))
+										exec("src_%s.load()" % name)
 										_cache.execute("insert into src values ('%s')" % name)
 										printa("src %s loaded" % name)
 									else:
 										src_reload.append(name)
 										exec("reload(src_%s)" % name)
+										exec("src_%s.load()" % name)
 										printa("src %s reloaded" % name)
 							put("NOTICE %s :[src] %s loaded" % (nick,', '.join(src_load)))
 							put("NOTICE %s :[src] %s reloaded" % (nick,', '.join(src_reload)))
@@ -232,11 +231,13 @@ def main():
 									if entry is False:
 										mod_load.append(name)
 										exec("from modules import %s" % name)
+										exec("%s.load()" % name)
 										_cache.execute("insert into modules values ('%s')" % name)
 										printa("module %s loaded" % name)
 									else:
 										mod_reload.append(name)
 										exec("reload(%s)" % name)
+										exec("%s.load()" % name)
 										printa("module %s reloaded" % name)
 							put("NOTICE %s :[module] %s loaded" % (nick,', '.join(mod_load)))
 							put("NOTICE %s :[module] %s reloaded" % (nick,', '.join(mod_reload)))
