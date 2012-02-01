@@ -108,7 +108,6 @@ def disconnect():
 		sys.exit(2)
 
 def main():
-
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -197,7 +196,6 @@ def main():
 									exec("del src_%s" % loaded)
 									_cache.execute("delete from src where name='%s'" % loaded)
 									printa("src %s unloaded" % loaded)
-									
 							put("NOTICE %s :[src] %s unloaded" % (nick,', '.join(src_unload)))
 							for source in os.listdir("src"):
 								if source != "__init__.py" and source.endswith(".py"):
