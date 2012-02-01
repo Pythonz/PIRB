@@ -104,11 +104,6 @@ def disconnect():
 		sys.exit(2)
 
 def main():
-	global s
-	global _cache
-	global _botnick
-	global _loaded
-	__builtin__._loaded = False
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -135,7 +130,7 @@ def main():
 					exec("from modules import %s" % mod.split(".py")[0])
 					_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 					printa("module %s loaded" % mod.split(".py")[0])
-			_loaded = True
+			__builtin__._loaded = True
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind"), 0))
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
@@ -366,6 +361,7 @@ if __name__ == '__main__':
 				printa(sys.argv[0]+" database		creates new databases")
 				printa(sys.argv[0]+" configure		config maker")
 		else:
+			__builtin__._loaded = False
 			main()
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
