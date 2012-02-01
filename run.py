@@ -89,14 +89,6 @@ def keepnick():
 
 def disconnect():
 	try:
-		for data in _cache.execute("select name from src"):
-			exec("del src_%s" % data[0])
-			printa("src %s unloaded" % str(data[0]))
-		for data in _cache.execute("select name from modules"):
-			exec("del %s" % data[0])
-			printa("module %s unloaded" % str(data[0]))
-	except Exception,e: printe(e)
-	try:
 		s.close()
 		_userdb.close()
 		_chandb.close()
