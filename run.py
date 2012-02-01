@@ -112,9 +112,6 @@ def main():
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
-	_cache.execute("delete from src")
-	_cache.execute("delete from modules")
-	_cache.execute("delete from binds")
 	_cache.execute("delete from botnick")
 	_cache.execute("insert into botnick values ('%s')" % _botnick)
 	__builtin__._userdb = sqlite3.connect("database/user.db")
@@ -125,6 +122,9 @@ def main():
 	__builtin__.s = socket.socket()
 	try:
 		if not _loaded:
+			_cache.execute("delete from src")
+			_cache.execute("delete from modules")
+			_cache.execute("delete from binds")
 			for source in os.listdir("src"):
 				if source != "__init__.py" and source.endswith(".py"):
 					exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
