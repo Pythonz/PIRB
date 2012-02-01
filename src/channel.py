@@ -3,7 +3,7 @@ from src.user import getauth
 from fnmatch import fnmatch as wmatch
 from src.irc import irc_send
 
-bind("channel_join","src_channel","raw","001")
+bind("channel_join","src_channel","raw","376")
 bind("channel_kick","src_channel","raw","KICK")
 bind("channel_register","src_channel","msg","register")
 bind("channel_drop","src_channel","msg","drop")

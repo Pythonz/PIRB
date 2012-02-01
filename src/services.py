@@ -1,7 +1,7 @@
 from run import put,bind,c,putf
 
 bind("nick_identify","src_services","not")
-bind("quakenet_auth","src_services","raw","001")
+bind("quakenet_auth","src_services","raw","376")
 bind("quakenet_mode_x","src_services","not","You")
 
 def nick_identify(nick, uhost, target, arg):
