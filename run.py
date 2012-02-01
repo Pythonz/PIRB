@@ -107,6 +107,8 @@ def main():
 	global s
 	global _cache
 	global _botnick
+	global _running
+	__builtin__.__running = True
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -122,14 +124,20 @@ def main():
 	_chandb.isolation_level = None
 	__builtin__.s = socket.socket()
 	try:
+		if not _running:
+			for source in os.listdir("src"):
+				if source != "__init__.py" and source.endswith(".py"):
+					exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
+					_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
+					printa("src %s loaded" % source.split(".py")[0])
+			for mod in os.listdir("modules"):
+				if mod != "__init__.py" and mod.endswith(".py"):
+					exec("from modules import %s" % mod.split(".py")[0])
+					_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
+					printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind"), 0))
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
-	except Exception,e: printe(e)
-	except KeyboardInterrupt:
-		printe("\nAborting ... CTRL + C")
-		sys.exit(2)
-	try:
 		mail('NICK '+_botnick)
 		mail('USER '+c.get("BOT", "username")+' '+c.get("SERVER", "address")+' MechiSoft :'+c.get("BOT", "realname"))
 		thread.start_new_thread(keepnick, ())
@@ -357,16 +365,6 @@ if __name__ == '__main__':
 				printa(sys.argv[0]+" database		creates new databases")
 				printa(sys.argv[0]+" configure		config maker")
 		else:
-			for source in os.listdir("src"):
-				if source != "__init__.py" and source.endswith(".py"):
-					exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
-					_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
-					printa("src %s loaded" % source.split(".py")[0])
-			for mod in os.listdir("modules"):
-				if mod != "__init__.py" and mod.endswith(".py"):
-					exec("from modules import %s" % mod.split(".py")[0])
-					_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
-					printa("module %s loaded" % mod.split(".py")[0])
 			main()
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
