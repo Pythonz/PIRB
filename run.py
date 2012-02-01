@@ -89,13 +89,15 @@ def keepnick():
 
 def disconnect():
 	try:
-		s.close()
-		_userdb.close()
-		_chandb.close()
 		for data in _cache.execute("select name from src"):
 			exec("del src_%s" % str(data[0]))
 		for data in _cache.execute("select name from modules"):
 			exec("del %s" % str(data[0]))
+	except: continue
+	try:
+		s.close()
+		_userdb.close()
+		_chandb.close()
 		_cache.close()
 		printa("connection closed")
 		printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
