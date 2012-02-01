@@ -89,9 +89,9 @@ def keepnick():
 
 def disconnect():
 	try:
-		for data in _cache.execute("select * from src"):
+		for data in _cache.execute("select name from src"):
 			exec("del src_%s" % str(data[0]))
-		for data in _cache.execute("select * from modules"):
+		for data in _cache.execute("select name from modules"):
 			exec("del %s" % str(data[0]))
 		s.close()
 		_userdb.close()
