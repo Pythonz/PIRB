@@ -93,7 +93,7 @@ def disconnect():
 			exec("del src_%s" % str(data[0]))
 		for data in _cache.execute("select name from modules"):
 			exec("del %s" % str(data[0]))
-	except: continue
+	except: pass
 	try:
 		s.close()
 		_userdb.close()
