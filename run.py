@@ -145,8 +145,8 @@ def main():
 				reg = line.rstrip()
 				printc(line.rstrip())
 				if line.split()[1] == ":Closing":
-					s.close()
-					return 0
+					#s.close()
+					#return 0
 					break
 				if line.split()[0]=='PING':
 					mail('PONG '+line[5:])
@@ -287,7 +287,7 @@ def main():
 			printe("\nAborting ... CTRL + C")
 			sys.exit(2)
 		if _timeout > "10" or _timeout == "10":
-			s.close()
+			#s.close()
 			printe("PING TIMEOUT! RESTARTING ...")
 			break
 	s.close()
