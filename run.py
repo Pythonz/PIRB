@@ -89,6 +89,10 @@ def keepnick():
 
 def disconnect():
 	try:
+		for data in _cache.execute("select * from src"):
+			exec("del src_%s" % str(data[0]))
+		for data in _cache.execute("select * from modules"):
+			exec("del %s" % str(data[0]))
 		s.close()
 		_userdb.close()
 		_chandb.close()
@@ -104,12 +108,13 @@ def disconnect():
 		sys.exit(2)
 
 def main():
+
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
-	_loaded = False
-	for data in _cache.execute("select * from binds"):
-		_loaded = True
+	_cache.execute("delete from src")
+	_cache.execute("delete from modules")
+	_cache.execute("delete from binds")
 	_cache.execute("delete from botnick")
 	_cache.execute("insert into botnick values ('%s')" % _botnick)
 	__builtin__._userdb = sqlite3.connect("database/user.db")
@@ -119,20 +124,16 @@ def main():
 	_chandb.isolation_level = None
 	__builtin__.s = socket.socket()
 	try:
-		if not _loaded:
-			_cache.execute("delete from src")
-			_cache.execute("delete from modules")
-			_cache.execute("delete from binds")
-			for source in os.listdir("src"):
-				if source != "__init__.py" and source.endswith(".py"):
-					exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
-					_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
-					printa("src %s loaded" % source.split(".py")[0])
-			for mod in os.listdir("modules"):
-				if mod != "__init__.py" and mod.endswith(".py"):
-					exec("from modules import %s" % mod.split(".py")[0])
-					_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
-					printa("module %s loaded" % mod.split(".py")[0])
+		for source in os.listdir("src"):
+			if source != "__init__.py" and source.endswith(".py"):
+				exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
+				_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
+				printa("src %s loaded" % source.split(".py")[0])
+		for mod in os.listdir("modules"):
+			if mod != "__init__.py" and mod.endswith(".py"):
+				exec("from modules import %s" % mod.split(".py")[0])
+				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
+				printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind"), 0))
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
