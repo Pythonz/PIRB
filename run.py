@@ -87,6 +87,16 @@ def keepnick():
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
+def disconnect()
+	s.close()
+	_userdb.close()
+	_chandb.close()
+	_cache.close()
+	printa("connection closed")
+	printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
+	sleep(int(c.get("SERVER", "reconnect")))
+	main()
+
 def main():
 	global s
 	global _cache
@@ -145,9 +155,8 @@ def main():
 				reg = line.rstrip()
 				printc(line.rstrip())
 				if line.split()[1] == ":Closing":
-					#s.close()
+					disconnect()
 					return 0
-					break
 				if line.split()[0]=='PING':
 					mail('PONG '+line[5:])
 					__builtin__._timeout = 0
@@ -282,22 +291,16 @@ def main():
 						elif command == "":
 							exec("""%s.%s("%s")""" % (module, hook, reg))
 		except Exception,e: printe(e)
-		except socket.error: break
+		except socket.error:
+			disconnect()
+			return 0
 		except KeyboardInterrupt:
 			printe("\nAborting ... CTRL + C")
 			sys.exit(2)
 		if _timeout > "10" or _timeout == "10":
-			#s.close()
 			printe("PING TIMEOUT! RESTARTING ...")
-			break
-	s.close()
-	_userdb.close()
-	_chandb.close()
-	_cache.close()
-	printa("connection closed")
-	printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
-	sleep(int(c.get("SERVER", "reconnect")))
-	main()
+			disconnect()
+			return 0
 
 if __name__ == '__main__':
 	try:
