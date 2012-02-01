@@ -85,17 +85,25 @@ def keepnick():
 		__builtin__._timeout += 1
 		thread.start_new_thread(keepnick, ())
 	except Exception,e: printe(e)
-	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
+	except KeyboardInterrupt:
+		printe("\nAborting ... CTRL + C")
+		sys.exit(2)
 
 def disconnect():
-	s.close()
-	_userdb.close()
-	_chandb.close()
-	_cache.close()
-	printa("connection closed")
-	printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
-	sleep(int(c.get("SERVER", "reconnect")))
-	main()
+	try:
+		s.close()
+		_userdb.close()
+		_chandb.close()
+		_cache.close()
+		printa("connection closed")
+		printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
+		sleep(int(c.get("SERVER", "reconnect")))
+		main()
+	except Exception,e: printe(e)
+	except socket.error: pass
+	except KeyboardInterrupt:
+		printe("\nAborting ... CTRL + C")
+		sys.exit(2)
 
 def main():
 	global s
