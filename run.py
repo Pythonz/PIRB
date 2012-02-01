@@ -256,9 +256,9 @@ def main():
 							put("NOTICE %s :[module] %s reloaded" % (nick,', '.join(mod_reload)))
 					if arg.split()[0].lower() == "restart" and line.split()[2][0] != "#":
 						if src_user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
-							put("NOTICE %s :Restarting ..." % nick)
-							s.close()
-							break
+							putf("QUIT :Restart ... I\'ll be back in %s seconds!" % c.get("SERVER", "reconnect"))
+							disconnect()
+							return 0
 					for hookconfig in _cache.execute("select * from binds"):
 						hook = str(hookconfig[0])
 						module = str(hookconfig[1])
