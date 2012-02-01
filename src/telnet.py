@@ -2,6 +2,8 @@
 from run import bind,put,putf,c,printe,printa,printc
 import thread,socket,ConfigParser,hashlib
 
+def load(): pass
+
 class Telnet:
 	def __init__(self):
 		self.ip = c.get("TELNET", "ip")
