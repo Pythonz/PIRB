@@ -107,8 +107,8 @@ def main():
 	global s
 	global _cache
 	global _botnick
-	global _running
-	__builtin__._running = True
+	global _loaded
+	__builtin__._loaded = False
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -124,7 +124,7 @@ def main():
 	_chandb.isolation_level = None
 	__builtin__.s = socket.socket()
 	try:
-		if not _running:
+		if not _loaded:
 			for source in os.listdir("src"):
 				if source != "__init__.py" and source.endswith(".py"):
 					exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
@@ -135,6 +135,7 @@ def main():
 					exec("from modules import %s" % mod.split(".py")[0])
 					_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 					printa("module %s loaded" % mod.split(".py")[0])
+			_loaded = True
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind"), 0))
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
