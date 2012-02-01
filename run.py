@@ -104,6 +104,11 @@ def disconnect():
 		sys.exit(2)
 
 def main():
+	global s
+	global _botnick
+	global _cache
+	global _userdb
+	global _chandb
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
