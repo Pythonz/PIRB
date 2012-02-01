@@ -107,6 +107,9 @@ def main():
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
+	_loaded = False
+	for data in _cache.execute("select * from binds"):
+		_loaded = True
 	_cache.execute("delete from botnick")
 	_cache.execute("insert into botnick values ('%s')" % _botnick)
 	__builtin__._userdb = sqlite3.connect("database/user.db")
@@ -130,7 +133,6 @@ def main():
 					exec("from modules import %s" % mod.split(".py")[0])
 					_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 					printa("module %s loaded" % mod.split(".py")[0])
-			__builtin__._loaded = True
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind"), 0))
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
@@ -361,7 +363,6 @@ if __name__ == '__main__':
 				printa(sys.argv[0]+" database		creates new databases")
 				printa(sys.argv[0]+" configure		config maker")
 		else:
-			__builtin__._loaded = False
 			main()
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
