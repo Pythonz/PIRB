@@ -95,7 +95,7 @@ def disconnect():
 		for data in _cache.execute("select name from modules"):
 			exec("del %s" % data[0])
 			printa("module %s unloaded" % str(data[0]))
-	except: printe(e)
+	except Exception,e: printe(e)
 	try:
 		s.close()
 		_userdb.close()
