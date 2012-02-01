@@ -87,7 +87,7 @@ def keepnick():
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
-def disconnect()
+def disconnect():
 	s.close()
 	_userdb.close()
 	_chandb.close()
