@@ -146,7 +146,7 @@ def main():
 				printc(line.rstrip())
 				if line.split()[1] == ":Closing":
 					#s.close()
-					#return 0
+					return 0
 					break
 				if line.split()[0]=='PING':
 					mail('PONG '+line[5:])
