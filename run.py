@@ -108,7 +108,7 @@ def main():
 	global _cache
 	global _botnick
 	global _running
-	__builtin__.__running = True
+	__builtin__._running = True
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
