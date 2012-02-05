@@ -6,6 +6,7 @@ def load():
 	bind("irc_botnick","src_irc","pub","$botnick")
 	bind("irc_botmode","src_irc","raw","001")
 	bind("irc_bans","src_irc","raw","352")
+	bind("irc_version","src_irc","msg","version")
 
 def irc_botnick(nick,host,chan,arg):
 	for data in _cache.execute("select name from botnick"):
@@ -39,5 +40,10 @@ def irc_bans(text):
 			if entry == False:
 				put("MODE %s +b %s" % (chan,data[0]))
 				put("KICK %s %s :Banned." % (chan,text.split()[7]))
+
+def irc_version(nick,uhost,args):
+	_version = open("version", "r")
+	irc_send(nick, "PIRB {0}".format(_version.read()))
+	_version.close()
 
 import run
