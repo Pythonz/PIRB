@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-import sys, socket, string, os, sqlite3, thread, ConfigParser, __builtin__
+import sys, socket, string, os, sqlite3, thread, ConfigParser, urllib2, subprocess, __builtin__
 from time import sleep,strftime,localtime
 
 __app__ = "PIRB"
@@ -87,6 +87,23 @@ def keepnick():
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
 
+def update(nick):
+	try:
+		_file = open("version", "r")
+		_old = _file.read()
+		_file.close()
+		_web = urllib2.urlopen("https://raw.github.com/Pythonz/PIRB/master/version")
+		_new = _web.read()
+		_web.close()
+		if _old != _new:
+			put("NOTICE {0} :{1} -> {2}".format(nick, _old, _new))
+			subprocess.Popen("git add configs/main.conf", shell=True).wait()
+			subprocess.Popen("git commit -m 'Save config file'", shell=True).wait()
+			subprocess.Popen("git pull", shell=True).wait()
+			put("QUIT :Updating...")
+			sys.exit(2)			
+		else: put("NOTICE {0} :No update available.".format(nick))
+
 def disconnect():
 	try:
 		s.close()
@@ -163,6 +180,9 @@ def main():
 					target = line.split()[2]
 					arg = ' '.join(line.split()[3:])[0:][1:]
 					cmd = line.split()[3][1:]
+					if arg.split()[0].lower() == "update" and line.split()[2][0] != "#":
+						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
+							update(nick)
 					if arg.split()[0].lower() == "binds" and line.split()[2][0] != "#":
 						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
 							for binds in _cache.execute("select * from binds"):
