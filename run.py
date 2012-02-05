@@ -97,9 +97,36 @@ def update(nick):
 		_web.close()
 		if _old != _new:
 			put("NOTICE {0} :{1} -> {2}".format(nick, _old, _new))
-			subprocess.Popen("git add configs/main.conf", shell=True).wait()
+			__cache = 0
+			for doc in os.listdir("database/updates/cache"):
+				__cache += 1
+			__chan = 0
+			for doc in os.listdir("database/updates/chan"):
+				__chan += 1
+			__user = 0
+			for doc in os.listdir("database/updates/user"):
+				__user += 1
+			subprocess.Popen("git add configs/main.conf database/*.db", shell=True).wait()
 			subprocess.Popen("git commit -m 'Save config file'", shell=True).wait()
 			subprocess.Popen("git pull", shell=True).wait()
+			___cache = 0
+			for doc in os.listdir("database/updates/cache"):
+				___cache += 1
+				if __cache < ___cache:
+					put("NOTICE {0} : - Insert 'cache/{1}'".format(nick, doc))
+					subprocess.Popen("sqlite3 database/cache.db < database/updates/cache/{0}".format(doc))
+			___chan = 0
+			for doc in os.listdir("database/updates/chan"):
+				___chan += 1
+				if __chan < ___chan:
+					put("NOTICE {0} : - Insert 'chan/{1}'".format(nick, doc))
+					subprocess.Popen("sqlite3 database/chan.db < database/updates/chan/{0}".format(doc))
+			___user = 0
+			for doc in os.listdir("database/updates/user"):
+				___user += 1
+				if __user < ___user:
+					put("NOTICE {0} : - Insert 'user/{1}'".format(nick, doc))
+					subprocess.Popen("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
 			put("QUIT :Updating...")
 			sys.exit(2)			
 		else: put("NOTICE {0} :No update available.".format(nick))
@@ -325,29 +352,10 @@ if __name__ == '__main__':
 	try:
 		if len(sys.argv) != 1:
 			if sys.argv[1].lower() == "database":
-				_user = sqlite3.connect("database/user.db")
-				_user.isolation_level = None
-				_chan = sqlite3.connect("database/chan.db")
-				_chan.isolation_level = None
-				_cache = sqlite3.connect("database/cache.db")
-				_cache.isolation_level = None
-				print("Created user, channel and cache databases...")
-				print("Now im going to create the needed tables")
-				_user.execute("create table auth(nick text, auth text)")
-				_chan.execute("create table list(channel text)")
-				_chan.execute("create table channel(channel text, auth text, flags text)")
-				_chan.execute("create table info(channel text, topic text, modes text)")
-				_chan.execute("create table bans(channel text, ban text)")
-				_chan.execute("create table exempts(channel text, exempt text)")
-				_cache.execute("create table src(name text)")
-				_cache.execute("create table modules(name text)")
-				_cache.execute("create table binds(name text, module text, event text, command text)")
-				_cache.execute("create table botnick(name text)")
-				print("All tables in databases created ... Closing connection now")
-				_user.close()
-				_chan.close()
-				_cache.close()
-				print("Databases have been restored. You can run me now.")
+				subprocess.Popen("sqlite3 cache.db < cache.sql", shell=True, cwd="database").wait()
+				subprocess.Popen("sqlite3 chan.db < chan.sql", shell=True, cwd="database").wait()
+				subprocess.Popen("sqlite3 user.db < user.sql", shell=True, cwd="database").wait()
+				print("Databases created")
 			if sys.argv[1].lower() == "configure":
 				cadd = "\033[1m\033[34m"
 				cdel = "\033[0m"
