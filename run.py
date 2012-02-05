@@ -103,6 +103,10 @@ def update(nick):
 			put("QUIT :Updating...")
 			sys.exit(2)			
 		else: put("NOTICE {0} :No update available.".format(nick))
+	except Exception,e: printe(e)
+	except KeyboardInterrupt:
+		printe("\nAborting ... CTRL + C")
+		sys.exit(2)
 
 def disconnect():
 	try:
