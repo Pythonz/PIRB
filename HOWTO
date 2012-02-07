@@ -1,0 +1,4 @@
+Run ./run.py database to initialize databases
+Run ./run.py configure to configure the bot
+Run the run.sh to get all features (screen in background)
+PRIVMSG him UPDATE and he checks for updates and do them by himself.
