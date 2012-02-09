@@ -17,7 +17,6 @@ install: pirb.pyc
 
 clean:
 	@echo Cleaning base
-	@rm -rf *.pyc
 	@echo Cleaning modules
 	@rm -rf modules/*.pyc
 	@echo Cleaning src
@@ -27,8 +26,7 @@ clean:
 dist-clean: pirb
 	@echo Remove pirb-binary
 	@rm -rf pirb
-	@echo Remove base-binaries
-	@rm -rf *.pyc
+	@rm -rf pirb.pyc
 	@echo Remove modules-binaries
 	@rm -rf modules/*.pyc
 	@echo Remove src-binaries
