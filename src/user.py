@@ -1,4 +1,4 @@
-from run import put,putf,bind,c,printa,printc,printe,whois,whochan
+from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
 
 def load():
 	bind("nick_in_use","src_user","raw","433")
@@ -58,4 +58,4 @@ def getauth(nick):
 	for data in _userdb.execute("select auth from auth where nick='%s'" % nick):
 		return data[0]
 
-import run
+import pirb

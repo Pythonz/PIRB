@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-from run import bind,put,putf,c,printe,printa,printc
+from pirb import bind,put,putf,c,printe,printa,printc
 import thread,socket,ConfigParser,hashlib
 
 def load(): pass
@@ -9,7 +9,7 @@ class Telnet:
 		self.ip = c.get("TELNET", "ip")
 		self.port = c.get("TELNET", "port")
 
-	def run(self):
+	def pirb(self):
 		try:
 			rc = socket.socket()
 			if self.ip != "" and self.port != "":
@@ -59,6 +59,6 @@ class Telnet:
 
 		except Exception,e: printe(e)
 
-thread.start_new_thread(Telnet().run,())
+thread.start_new_thread(Telnet().pirb,())
 
-import run
+import pirb

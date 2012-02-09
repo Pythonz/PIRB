@@ -1,4 +1,4 @@
-from run import put,bind,c,putf
+from pirb import put,bind,c,putf
 
 def load():
 	bind("nick_identify","src_services","not")
@@ -23,4 +23,4 @@ def quakenet_mode_x(nick,host,target,arg):
         if arg == react:
                 putf("MODE %s +x" % target)
 
-import run
+import pirb

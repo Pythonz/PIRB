@@ -1,4 +1,4 @@
-from run import put,putf,bind,c,printa,printc,printe
+from pirb import put,putf,bind,c,printa,printc,printe
 from time import sleep
 from fnmatch import fnmatch as wmatch
 
@@ -46,4 +46,4 @@ def irc_version(nick,uhost,args):
 	irc_send(nick, "PIRB {0}".format(_version.read()))
 	_version.close()
 
-import run
+import pirb

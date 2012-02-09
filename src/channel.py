@@ -1,4 +1,4 @@
-from run import put,putf,bind,c,printa,printc,printe,whois,whochan
+from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
 from src.user import getauth
 from fnmatch import fnmatch as wmatch
 from src.irc import irc_send
@@ -432,4 +432,4 @@ def channel_msg_auth(nick,host,arg):
 	else:
 		irc_send(nick, "invalid channel")
 
-import run
+import pirb
