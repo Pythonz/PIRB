@@ -1,4 +1,4 @@
 #!/bin/sh
 while [ 1 ]; do
-	./run.py
+	./pirb
 done
