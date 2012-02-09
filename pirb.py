@@ -119,8 +119,6 @@ def update(nick):
 			subprocess.Popen("git rm --cached database/*.db", shell=True).wait()
 			subprocess.Popen("git commit -m 'Save'", shell=True).wait()
 			subprocess.Popen("git pull", shell=True).wait()
-			subprocess.Popen("make bin", shell=True).wait()
-			subprocess.Popen("make install", shell=True).wait()
 			___cache = 0
 			for doc in os.listdir("database/updates/cache"):
 				___cache += 1
