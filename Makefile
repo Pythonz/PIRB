@@ -10,6 +10,10 @@ all: pirb.py
 	@$(CC) $(CFLAGS) modules/*.py
 	@echo Done - make install for install binaries
 
+bin: pirb.py
+	@echo Compile binary
+	@$(CC) $(CFLAGS) pirb.py
+
 install: pirb.pyc
 	@echo Install pirb.pyc -> pirb
 	@cp pirb.pyc pirb

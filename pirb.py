@@ -1,7 +1,16 @@
 #!/usr/bin/env python
 
-import sys, socket, string, os, sqlite3, thread, ConfigParser, urllib2, subprocess, __builtin__
-from time import sleep,strftime,localtime
+import sys
+import socket
+import string
+import os
+import sqlite3
+import thread
+import ConfigParser
+import urllib2
+import subprocess
+import __builtin__
+import time
 
 __app__ = "PIRB"
 
@@ -11,15 +20,15 @@ sys.path.append("src")
 
 def printa(text):
 	if text:
-		print "\033[1m\033[34m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
+		print "\033[1m\033[34m[" + time.strftime("%H:%M", time.localtime()) + "] " + str(text) + "\033[0m"
 
 def printc(text):
 	if text:
-		print "\033[1m\033[32m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
+		print "\033[1m\033[32m[" + time.strftime("%H:%M", time.localtime()) + "] " + str(text) + "\033[0m"
 
 def printe(text):
 	if c.getboolean("BOT", "debug"):
-		print "\033[1m\033[31m[" + strftime("%H:%M", localtime()) + "] " + str(text) + "\033[0m"
+		print "\033[1m\033[31m[" + time.strftime("%H:%M", time.localtime()) + "] " + str(text) + "\033[0m"
 
 c = ConfigParser.RawConfigParser()
 c.read("configs/main.conf")
@@ -47,7 +56,7 @@ def put(arg):
 	try:
 		s.send(arg.rstrip()+"\n")
 		printa(arg.rstrip())
-		sleep(1)
+		time.sleep(1)
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
@@ -73,7 +82,7 @@ def whochan(channel):
 
 def keepnick():
 	try:
-		sleep(60)
+		time.sleep(60)
 		_here = sqlite3.connect("database/cache.db")
 		_here.isolation_level = None
 		for data in _here.execute("select name from botnick"):
@@ -110,6 +119,8 @@ def update(nick):
 			subprocess.Popen("git rm --cached database/*.db", shell=True).wait()
 			subprocess.Popen("git commit -m 'Save'", shell=True).wait()
 			subprocess.Popen("git pull", shell=True).wait()
+			subprocess.Popen("make bin", shell=True).wait()
+			subprocess.Popen("make install", shell=True).wait()
 			___cache = 0
 			for doc in os.listdir("database/updates/cache"):
 				___cache += 1
@@ -144,7 +155,7 @@ def disconnect():
 		_cache.close()
 		printa("connection closed")
 		printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
-		sleep(int(c.get("SERVER", "reconnect")))
+		time.sleep(int(c.get("SERVER", "reconnect")))
 		main()
 	except Exception,e: printe(e)
 	except socket.error: pass
