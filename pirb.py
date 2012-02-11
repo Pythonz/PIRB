@@ -33,8 +33,6 @@ def printe(text):
 c = ConfigParser.RawConfigParser()
 c.read("configs/main.conf")
 
-_ipc = len(c.get("SERVER", "bind").split())
-_ips = c.get("SERVER", "bind").split()
 _ip = 0
 
 def mail(arg):
@@ -168,10 +166,6 @@ def disconnect():
 def main():
 	c.read("configs/main.conf")
 	global _ip
-	global _ipc
-	global _ips
-	_ipc = len(c.get("SERVER", "bind").split())
-	_ips = c.get("SERVER", "bind").split()
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -200,10 +194,10 @@ def main():
 				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 				printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
-			s.bind((_ips[_ip], 0))
-			printa("binding to ip '{0}'".format(_ips[_ip]))
+			s.bind((c.get("SERVER", "bind").split()[_ip], 0))
+			printa("binding to ip '{0}'".format(c.get("SERVER", "bind").split()[_ip]))
 			_ip += 1
-			if _ipc == _ip:
+			if len(c.get("SERVER", "bind").split()) == _ip:
 				_ip = 0
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		mail('NICK '+_botnick)
@@ -255,9 +249,6 @@ def main():
 						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
 							c.read("configs/main.conf")
 							put("NOTICE %s :[run] config reloaded" % nick)
-							_ipc = len(c.get("SERVER", "bind").split())
-							_ips = c.get("SERVER", "bind").split()
-							put("NOTICE %s :[run] ips reloaded" % nick)
 							_cache.execute("delete from binds")
 							src_load = list()
 							src_reload = list()
