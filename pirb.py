@@ -154,8 +154,6 @@ def update(nick):
 
 def disconnect():
 	try:
-		global _ip
-		_ip = 
 		s.close()
 		_userdb.close()
 		_chandb.close()
