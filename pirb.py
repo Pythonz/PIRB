@@ -199,6 +199,7 @@ def main():
 				printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
 			s.bind((_ips[_ip], 0))
+			printa("binding to ip '{0}'".format(_ips[_ip]))
 			_ip += 1
 			if _ipc == _ip:
 				_ip = 0
