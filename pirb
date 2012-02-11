@@ -28,13 +28,17 @@ case $1 in
 			./pirb start
 		fi
 		;;
+	force-start)
+		rm -f pirb.pid
+		./pirb start
+		;;
 	debug)
 		while [ 1 ]; do
 			./pirb.py
 		done
 		;;
 	*)
-		echo "start | stop | restart | debug"
+		echo "start | stop | restart | force-start | debug"
 		;;
 esac
 
