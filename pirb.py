@@ -33,6 +33,13 @@ def printe(text):
 c = ConfigParser.RawConfigParser()
 c.read("configs/main.conf")
 
+global _ip
+global _ipc
+global _ips
+_ipc = len(c.get("SERVER", "bind").split())
+_ips = c.get("SERVER", "bind").split()
+_ip = 0
+
 def mail(arg):
  try:
 	s.send(arg.rstrip()+"\n")
@@ -147,6 +154,8 @@ def update(nick):
 
 def disconnect():
 	try:
+		global _ip
+		_ip = 
 		s.close()
 		_userdb.close()
 		_chandb.close()
@@ -191,7 +200,12 @@ def main():
 				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 				printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
-			s.bind((c.get("SERVER", "bind"), 0))
+			s.bind((_ips[_ip], 0))
+			global _ip
+			_ip += 1
+			if _ipc == _ip:
+				global _ip
+				_ip = 0
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		mail('NICK '+_botnick)
 		mail('USER '+c.get("BOT", "username")+' '+c.get("SERVER", "address")+' MechiSoft :'+c.get("BOT", "realname"))
