@@ -1,0 +1,29 @@
+#!/bin/sh
+case $1 in
+	start)
+		if [ ! -f pirb.pid ]; then
+			nohup ./pirb.py &
+			pid=$!
+			echo $pid > pirb.pid
+			echo "PIRB started into background (PID: $pid)"
+		else
+			echo "PIRB is already running"
+		fi
+		;;
+	stop)
+		if [ -f pirb.pid ]; then
+			pid=$(cat pirb.pid)
+			kill -9 $pid
+			rm -f pirb.pid
+			echo "PIRB is stopped (PID: $pid)"
+		else
+			echo "PIRB is not running"
+		fi
+		;;
+	debug)
+		while [ 1 ]; do
+			./pirb.py
+		done
+		;;
+esac
+
