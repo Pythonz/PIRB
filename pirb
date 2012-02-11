@@ -7,7 +7,15 @@ case $1 in
 			echo $pid > pirb.pid
 			echo "PIRB started into background (PID: $pid)"
 		else
-			echo "PIRB is already running"
+			pid=$(cat pirb.pid)
+			status=false
+			for data in $(ps | grep $pid); do
+				status=true
+			if [ $status == false ]; then
+				sh pirb start
+			else
+				echo "PIRB is already running"
+			fi
 		fi
 		;;
 	stop)
@@ -28,10 +36,6 @@ case $1 in
 			sh pirb start
 		fi
 		;;
-	force-start)
-		rm -f pirb.pid
-		sh pirb start
-		;;
 	debug)
 		while [ 1 ]; do
 			python pirb.py
@@ -50,7 +54,7 @@ case $1 in
 		echo $status
 		;;
 	*)
-		echo "start | stop | restart | force-start | debug | status"
+		echo "start | stop | restart | debug | status"
 		;;
 esac
 
