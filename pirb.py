@@ -140,7 +140,7 @@ def update(nick):
 					put("NOTICE {0} : - Insert 'user/{1}'".format(nick, doc))
 					subprocess.Popen("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
 			put("QUIT :Updating...")
-			sys.exit(2)			
+			subprocess.Popen("sh pirb restart", shell=True).wait()
 		else: put("NOTICE {0} :No update available.".format(nick))
 	except Exception,e: printe(e)
 	except KeyboardInterrupt:

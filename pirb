@@ -2,7 +2,7 @@
 case $1 in
 	start)
 		if [ ! -f pirb.pid ]; then
-			nohup ./pirb.py &
+			./pirb.py >> /dev/null &
 			pid=$!
 			echo $pid > pirb.pid
 			echo "PIRB started into background (PID: $pid)"
@@ -20,10 +20,21 @@ case $1 in
 			echo "PIRB is not running"
 		fi
 		;;
+	restart)
+		if [ -f pirb.pid ]; then
+			./pirb stop
+			./pirb start
+		else
+			./pirb start
+		fi
+		;;
 	debug)
 		while [ 1 ]; do
 			./pirb.py
 		done
+		;;
+	*)
+		echo "start | stop | restart | debug"
 		;;
 esac
 
