@@ -395,7 +395,7 @@ if __name__ == '__main__':
 				c.set("SERVER", "port", raw_input(cadd+"Port: "+cdel))
 				c.set("SERVER", "reconnect", raw_input(cadd+"Time to wait before reconnect: "+cdel))
 				c.set("SERVER", "bind", raw_input(cadd+"IP to bind to (leave it blank when you don't need it): "+cdel))
-				c.set("SERVER", "ipv6", raw_input(caddr+"IPv6 (True/False): "+cdel))
+				c.set("SERVER", "ipv6", raw_input(cadd+"IPv6 (True/False): "+cdel))
 				printc("So now the server settings are ready. Lets go to bot settings:")
 				c.set("BOT", "nick", raw_input(cadd+"Nick: "+cdel))
 				c.set("BOT", "username", raw_input(cadd+"Username (ident): "+cdel))
@@ -422,6 +422,6 @@ if __name__ == '__main__':
 				printa(sys.argv[0]+" configure		config maker")
 		else:
 			main()
-	except Exception,e: printe(e)
+	except Exception,e: print(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 	sys.exit(2)
