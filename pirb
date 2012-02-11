@@ -2,7 +2,7 @@
 case $1 in
 	start)
 		if [ ! -f pirb.pid ]; then
-			./pirb.py >> /dev/null &
+			python pirb.py >> /dev/null &
 			pid=$!
 			echo $pid > pirb.pid
 			echo "PIRB started into background (PID: $pid)"
@@ -22,23 +22,35 @@ case $1 in
 		;;
 	restart)
 		if [ -f pirb.pid ]; then
-			./pirb stop
-			./pirb start
+			sh pirb stop
+			sh pirb start
 		else
-			./pirb start
+			sh pirb start
 		fi
 		;;
 	force-start)
 		rm -f pirb.pid
-		./pirb start
+		sh pirb start
 		;;
 	debug)
 		while [ 1 ]; do
-			./pirb.py
+			python pirb.py
 		done
 		;;
+	status)
+		if [ -f pirb.pid ]; then
+			pid=$(cat pirb.pid)
+			status="PIRB seems to be crashed"
+			for data in $(ps | grep $pid); do
+				status="PIRB is running"
+			done
+		else
+			status="PIRB is not running"
+		fi
+		echo $status
+		;;
 	*)
-		echo "start | stop | restart | force-start | debug"
+		echo "start | stop | restart | force-start | debug | status"
 		;;
 esac
 
