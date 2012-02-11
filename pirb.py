@@ -167,6 +167,9 @@ def disconnect():
 
 def main():
 	c.read("configs/main.conf")
+	global _ip
+	global _ipc
+	global _ips
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -196,7 +199,6 @@ def main():
 				printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
 			s.bind((_ips[_ip], 0))
-			global _ip
 			_ip += 1
 			if _ipc == _ip:
 				_ip = 0
