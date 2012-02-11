@@ -199,10 +199,8 @@ def main():
 				printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
 			s.bind((_ips[_ip], 0))
-			global _ip
 			_ip += 1
 			if _ipc == _ip:
-				global _ip
 				_ip = 0
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		mail('NICK '+_botnick)
