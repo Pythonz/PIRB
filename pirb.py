@@ -33,9 +33,6 @@ def printe(text):
 c = ConfigParser.RawConfigParser()
 c.read("configs/main.conf")
 
-global _ip
-global _ipc
-global _ips
 _ipc = len(c.get("SERVER", "bind").split())
 _ips = c.get("SERVER", "bind").split()
 _ip = 0
