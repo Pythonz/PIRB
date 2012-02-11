@@ -182,7 +182,10 @@ def main():
 	_userdb.execute("delete from auth")
 	__builtin__._chandb = sqlite3.connect("database/chan.db")
 	_chandb.isolation_level = None
-	__builtin__.s = socket.socket()
+	if c.getboolean("SERVER", "ipv6") and socket.has_ipv6:
+		__builtin__.s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+	else:
+		__builtin__.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
 		for source in os.listdir("src"):
 			if source != "__init__.py" and source.endswith(".py"):
@@ -392,6 +395,7 @@ if __name__ == '__main__':
 				c.set("SERVER", "port", raw_input(cadd+"Port: "+cdel))
 				c.set("SERVER", "reconnect", raw_input(cadd+"Time to wait before reconnect: "+cdel))
 				c.set("SERVER", "bind", raw_input(cadd+"IP to bind to (leave it blank when you don't need it): "+cdel))
+				c.set("SERVER", "ipv6", raw_input(caddr+"IPv6 (True/False): "+cdel))
 				printc("So now the server settings are ready. Lets go to bot settings:")
 				c.set("BOT", "nick", raw_input(cadd+"Nick: "+cdel))
 				c.set("BOT", "username", raw_input(cadd+"Username (ident): "+cdel))
