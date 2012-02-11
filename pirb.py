@@ -41,6 +41,9 @@ def mail(arg):
 	printa(arg.rstrip())
  except: pass
 
+def shell(text):
+	subprocess.Popen(text+" >> /dev/null", shell=True).wait()
+
 def fclean(name):
 	f = open(name, "wb")
 	f.write("")
@@ -117,30 +120,30 @@ def update(nick):
 			__user = 0
 			for doc in os.listdir("database/updates/user"):
 				__user += 1
-			subprocess.Popen("git add .", shell=True).wait()
-			subprocess.Popen("git rm --cached database/*.db", shell=True).wait()
-			subprocess.Popen("git commit -m 'Save'", shell=True).wait()
-			subprocess.Popen("git pull", shell=True).wait()
+			shell("git add .")
+			shell("git rm --cached database/*.db")
+			shell("git commit -m 'Save'")
+			shell("git pull")
 			___cache = 0
 			for doc in os.listdir("database/updates/cache"):
 				___cache += 1
 				if __cache < ___cache:
 					put("NOTICE {0} : - Insert 'cache/{1}'".format(nick, doc))
-					subprocess.Popen("sqlite3 database/cache.db < database/updates/cache/{0}".format(doc))
+					shell("sqlite3 database/cache.db < database/updates/cache/{0}".format(doc))
 			___chan = 0
 			for doc in os.listdir("database/updates/chan"):
 				___chan += 1
 				if __chan < ___chan:
 					put("NOTICE {0} : - Insert 'chan/{1}'".format(nick, doc))
-					subprocess.Popen("sqlite3 database/chan.db < database/updates/chan/{0}".format(doc))
+					shell("sqlite3 database/chan.db < database/updates/chan/{0}".format(doc))
 			___user = 0
 			for doc in os.listdir("database/updates/user"):
 				___user += 1
 				if __user < ___user:
 					put("NOTICE {0} : - Insert 'user/{1}'".format(nick, doc))
-					subprocess.Popen("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
+					shell("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
 			put("QUIT :Updating...")
-			subprocess.Popen("sh pirb restart", shell=True).wait()
+			shell("sh pirb restart")
 		else: put("NOTICE {0} :No update available.".format(nick))
 	except Exception,e: printe(e)
 	except KeyboardInterrupt:
@@ -369,9 +372,9 @@ if __name__ == '__main__':
 	try:
 		if len(sys.argv) != 1:
 			if sys.argv[1].lower() == "database":
-				subprocess.Popen("sqlite3 cache.db < cache.sql", shell=True, cwd="database").wait()
-				subprocess.Popen("sqlite3 chan.db < chan.sql", shell=True, cwd="database").wait()
-				subprocess.Popen("sqlite3 user.db < user.sql", shell=True, cwd="database").wait()
+				shell("sqlite3 cache.db < cache.sql", shell=True, cwd="database").wait()
+				shell("sqlite3 chan.db < chan.sql", shell=True, cwd="database").wait()
+				shell("sqlite3 user.db < user.sql", shell=True, cwd="database").wait()
 				print("Databases created")
 			if sys.argv[1].lower() == "configure":
 				cadd = "\033[1m\033[34m"
