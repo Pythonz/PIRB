@@ -170,6 +170,8 @@ def main():
 	global _ip
 	global _ipc
 	global _ips
+	_ipc = len(c.get("SERVER", "bind").split())
+	_ips = c.get("SERVER", "bind").split()
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -253,6 +255,9 @@ def main():
 						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
 							c.read("configs/main.conf")
 							put("NOTICE %s :[run] config reloaded" % nick)
+							_ipc = len(c.get("SERVER", "bind").split())
+							_ips = c.get("SERVER", "bind").split()
+							put("NOTICE %s :[run] ips reloaded" % nick)
 							_cache.execute("delete from binds")
 							src_load = list()
 							src_reload = list()
