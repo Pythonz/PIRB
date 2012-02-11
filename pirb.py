@@ -375,9 +375,9 @@ if __name__ == '__main__':
 	try:
 		if len(sys.argv) != 1:
 			if sys.argv[1].lower() == "database":
-				shell("sqlite3 cache.db < cache.sql")
-				shell("sqlite3 chan.db < chan.sql")
-				shell("sqlite3 user.db < user.sql")
+				shell("sqlite3 database/cache.db < database/cache.sql")
+				shell("sqlite3 database/chan.db < database/chan.sql")
+				shell("sqlite3 database/user.db < database/user.sql")
 				print("Databases created")
 			if sys.argv[1].lower() == "configure":
 				cadd = "\033[1m\033[34m"
