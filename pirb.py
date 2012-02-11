@@ -207,7 +207,7 @@ def main():
 				_ip = 0
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		line=s.recv(1024)
-		if line.split()[2] == "Auth":
+		if line.split()[2].lower() == "auth" or line.split()[1].lower() == "auth":
 			mail('NICK '+_botnick)
 			mail('USER '+c.get("BOT", "username")+' '+line.split()[0][1:]+' MechiSoft :'+c.get("BOT", "realname"))
 		thread.start_new_thread(keepnick, ())
