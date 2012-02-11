@@ -13,6 +13,7 @@ case $1 in
 				status="true"
 			done
 			if [ $status = "false" ]; then
+				rm -f pirb.pid
 				sh pirb start
 			else
 				echo "PIRB is already running"
