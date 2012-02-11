@@ -16,7 +16,7 @@ def nick_identify(nick, uhost, target, arg):
 
 def quakenet_auth(text):
 	if c.get("SERVICES", "quakenet") != "" and len(c.get("SERVICES", "quakenet").split()) == 2:
-		putf("PRIVMSG Q@CServe.quakenet.org :AUTH %s" % c.get("SERVICES", "quakenet"))
+		putf("PRIVMSG Q :AUTH %s" % c.get("SERVICES", "quakenet"))
 
 def quakenet_mode_x(nick,host,target,arg):
         react = "are now logged in as "+c.get("SERVICES","quakenet").split()[0]+"."
