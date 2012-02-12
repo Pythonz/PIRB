@@ -108,10 +108,5 @@ class Telnet:
 		except Exception,e: printe(e)
 
 thread.start_new_thread(Telnet().pirb,())
-def update(nick):
-	try:
-	except Exception,e: printe(e)
-	except KeyboardInterrupt:
-		printe("\nAborting ... CTRL + C")
-		sys.exit(2)
+
 import pirb
