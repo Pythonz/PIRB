@@ -101,55 +101,6 @@ def keepnick():
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
 
-def update(nick):
-	try:
-		_file = open("version", "r")
-		_old = _file.read()
-		_file.close()
-		_web = urllib2.urlopen("https://raw.github.com/Pythonz/PIRB/master/version")
-		_new = _web.read()
-		_web.close()
-		if _old != _new:
-			put("NOTICE {0} :{1} -> {2}".format(nick, _old, _new))
-			__cache = 0
-			for doc in os.listdir("database/updates/cache"):
-				__cache += 1
-			__chan = 0
-			for doc in os.listdir("database/updates/chan"):
-				__chan += 1
-			__user = 0
-			for doc in os.listdir("database/updates/user"):
-				__user += 1
-			shell("git add .")
-			shell("git rm --cached database/*.db")
-			shell("git commit -m 'Save'")
-			shell("git pull")
-			___cache = 0
-			for doc in os.listdir("database/updates/cache"):
-				___cache += 1
-				if __cache < ___cache:
-					put("NOTICE {0} : - Insert 'cache/{1}'".format(nick, doc))
-					shell("sqlite3 database/cache.db < database/updates/cache/{0}".format(doc))
-			___chan = 0
-			for doc in os.listdir("database/updates/chan"):
-				___chan += 1
-				if __chan < ___chan:
-					put("NOTICE {0} : - Insert 'chan/{1}'".format(nick, doc))
-					shell("sqlite3 database/chan.db < database/updates/chan/{0}".format(doc))
-			___user = 0
-			for doc in os.listdir("database/updates/user"):
-				___user += 1
-				if __user < ___user:
-					put("NOTICE {0} : - Insert 'user/{1}'".format(nick, doc))
-					shell("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
-			put("QUIT :Updating...")
-			shell("sh pirb restart")
-		else: put("NOTICE {0} :No update available.".format(nick))
-	except Exception,e: printe(e)
-	except KeyboardInterrupt:
-		printe("\nAborting ... CTRL + C")
-		sys.exit(2)
-
 def disconnect():
 	try:
 		s.close()
@@ -236,9 +187,6 @@ def main():
 					target = line.split()[2]
 					arg = ' '.join(line.split()[3:])[0:][1:]
 					cmd = line.split()[3][1:]
-					if arg.split()[0].lower() == "update" and line.split()[2][0] != "#":
-						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
-							update(nick)
 					if arg.split()[0].lower() == "binds" and line.split()[2][0] != "#":
 						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
 							for binds in _cache.execute("select * from binds"):

@@ -2,6 +2,9 @@
 case $1 in
 	start)
 		if [ ! -f pirb.pid ]; then
+			if [ -f pirb.pyc ]; then
+				rm -rf pirb.pyc
+			fi
 			python pirb.py >> /dev/null &
 			pid=$!
 			echo $pid > pirb.pid
@@ -25,6 +28,9 @@ case $1 in
 			pid=$(cat pirb.pid)
 			kill -9 $pid
 			rm -f pirb.pid
+			if [ -f pirb.pyc ]; then
+				rm -f pirb.pyc
+			fi
 			echo "PIRB is stopped (PID: $pid)"
 		else
 			echo "PIRB is not running"
@@ -40,7 +46,13 @@ case $1 in
 		;;
 	debug)
 		while [ 1 ]; do
+			if [ -f pirb.pyc ]; then
+				rm -f pirb.pyc
+			fi
 			python pirb.py
+			if [ -f pirb.pyc ]; then
+				rm -f pirb.pyc
+			fi
 		done
 		;;
 	status)
