@@ -95,6 +95,7 @@ class Telnet:
 									self.send(sock, " - Insert 'user/{0}'".format(doc))
 									shell("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
 							put("QUIT :Updating...")
+							sock.close()
 							shell("sh pirb restart")
 						else: self.send(sock, "No update available.")
 					elif cmd == "quit":

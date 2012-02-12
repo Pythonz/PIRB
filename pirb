@@ -60,7 +60,9 @@ case $1 in
 		done
 		;;
 	update)
-		if [ $(curl https://raw.github.com/Pythonz/PIRB/master/version) != $(cat version)]; then
+		available=$(curl https://raw.github.com/Pythonz/PIRB/master/version)
+		version=$(cat version)
+		if [ $available != $version ]; then
 			running="false"
 			if [ -f pirb.pid ]; then
 				sh pirb stop
