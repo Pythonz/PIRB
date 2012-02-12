@@ -68,7 +68,8 @@ case $1 in
 				sh pirb stop
 				running="true"
 			fi
-			git add configs/*.conf database/*.db modules/*.py
+			git rm --cached database/*.db
+			git add configs/*.conf modules/*.py
 			git commit -m 'Save'
 			git pull
 			if [ $running = "true" ]; then
