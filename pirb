@@ -28,6 +28,8 @@ case $1 in
 			pid=$(cat pirb.pid)
 			kill -9 $pid
 			rm -f pirb.pid
+			rm -f src/*.pyc
+			rm -f modules/*.pyc
 			if [ -f pirb.pyc ]; then
 				rm -f pirb.pyc
 			fi
@@ -50,10 +52,30 @@ case $1 in
 				rm -f pirb.pyc
 			fi
 			python pirb.py
+			rm -f src/*.pyc
+			rm -f modules/*.pyc
 			if [ -f pirb.pyc ]; then
 				rm -f pirb.pyc
 			fi
 		done
+		;;
+	update)
+		if [ $(curl https://raw.github.com/Pythonz/PIRB/master/version) != $(cat version)]; then
+			running="false"
+			if [ -f pirb.pid ]; then
+				sh pirb stop
+				running="true"
+			fi
+			git add configs/*.conf database/*.db modules/*.py
+			git commit -m 'Save'
+			git pull
+			if [ $running = "true" ]; then
+				sh pirb start
+			fi
+			echo "Done."
+		else
+			echo "No update available."
+		fi
 		;;
 	status)
 		if [ -f pirb.pid ]; then
@@ -68,7 +90,7 @@ case $1 in
 		echo $status
 		;;
 	*)
-		echo "start | stop | restart | debug | status"
+		echo "start | stop | restart | debug | update | status"
 		;;
 esac
 
