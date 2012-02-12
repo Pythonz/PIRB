@@ -99,6 +99,8 @@ class Telnet:
 						else: self.send(sock, "No update available.")
 					elif cmd == "quit":
 						self.send(sock,"Bye :(")
+						sock.close()
+					elif cmd == "die":
 						if os.access("pirb.pid", os.F_OK):
 							shell("sh pirb stop")
 						else: sys.exit(2)
