@@ -157,6 +157,10 @@ def main():
 			if len(c.get("SERVER", "bind").split()) == _ip:
 				_ip = 0
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
+		line=s.recv(1024)
+		if line.split()[2].lower() == "auth" or line.split()[1].lower() == "auth":
+			mail('NICK '+_botnick)
+			mail('USER '+c.get("BOT", "username")+' '+line.split()[0][1:]+' MechiSoft :'+c.get("BOT", "realname"))
 		thread.start_new_thread(keepnick, ())
 	except Exception,e: printe(e)
 	except KeyboardInterrupt:
@@ -171,9 +175,6 @@ def main():
 			for line in line.rstrip().split("\n"):
 				reg = line.rstrip()
 				printc(line.rstrip())
-				if line.split()[2].lower() == "auth" or line.split()[1].lower() == "auth":
-					mail('NICK '+_botnick)
-					mail('USER '+c.get("BOT", "username")+' '+line.split()[0][1:]+' MechiSoft :'+c.get("BOT", "realname"))
 				if line.split()[1] == ":Closing":
 					disconnect()
 					return 0
