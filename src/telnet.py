@@ -21,7 +21,9 @@ class Telnet:
 				thread.start_new_thread(self.client,(client,))
 
 			rc.close()
-		except Exception,e: printe(e)
+		except Exception,e:
+			printe(e)
+			self.pirb()
 
 	def send(self,sock,text):
 		sock.send("%s\n" % text)
