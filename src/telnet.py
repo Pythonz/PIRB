@@ -31,7 +31,7 @@ class Telnet:
 	def client(self,sock):
 		try:
 			self.send(sock,"Hello. I am %s." % c.get("BOT","username"))
-			self.send(sock,"Welcome to the Telnet interface of PIRB.")
+			self.send(sock,"Welcome to the remote interface of PIRB.")
 			self.send(sock,"Please enter the administrators password to unlock!")
 			if str(sock.recv(100)).rstrip() == c.get("ADMIN", "password"):
 				self.send(sock,"Access granted.")
