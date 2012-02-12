@@ -133,10 +133,9 @@ def main():
 	_userdb.execute("delete from auth")
 	__builtin__._chandb = sqlite3.connect("database/chan.db")
 	_chandb.isolation_level = None
+	__builtin__.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	if c.getboolean("SERVER", "ipv6") and socket.has_ipv6:
 		__builtin__.s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
-	else:
-		__builtin__.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
 		for source in os.listdir("src"):
 			if source != "__init__.py" and source.endswith(".py"):
