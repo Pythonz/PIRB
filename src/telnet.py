@@ -41,7 +41,7 @@ class Telnet:
 				raw = sock.recv(1024)
 				data = raw.rstrip()
 				if data != "":
-					cmd = data.split()[0]
+					cmd = data.split()[0].lower()
 					if cmd == "crypt":
 						sha = hashlib.sha1()
 						sha.update(data[6:])
@@ -98,6 +98,10 @@ class Telnet:
 							sock.close()
 							shell("sh pirb restart")
 						else: self.send(sock, "No update available.")
+					elif cmd == "version":
+						file = open("version", "r")
+						self.send(sock, "PIRB "+file.read())
+						file.close()
 					elif cmd == "quit":
 						self.send(sock,"Bye :(")
 						sock.close()
@@ -105,8 +109,20 @@ class Telnet:
 						if os.access("pirb.pid", os.F_OK):
 							shell("sh pirb stop")
 						else: sys.exit(2)
+					elif cmd == "help":
+						tbl = list()
+						tbl.append("help")
+						tbl.append("crypt")
+						tbl.append("put")
+						tbl.append("restart")
+						tbl.append("update")
+						tbl.append("version")
+						tbl.append("die")
+						tbl.append("quit")
+						for command in tbl:
+							self.send(sock, command.upper())
 					else:
-						self.send(sock,"unknown command '%s'. try 'help'" % cmd)
+						self.send(sock,"unknown command '%s'. try 'HELP'" % cmd.upper())
 
 		except Exception,e: printe(e)
 
