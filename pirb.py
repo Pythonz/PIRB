@@ -11,6 +11,7 @@ import urllib2
 import subprocess
 import __builtin__
 import time
+import traceback
 
 __app__ = "PIRB"
 
@@ -162,7 +163,10 @@ def main():
 			mail('NICK '+_botnick)
 			mail('USER '+c.get("BOT", "username")+' '+line.split()[0][1:]+' MechiSoft :'+c.get("BOT", "realname"))
 		thread.start_new_thread(keepnick, ())
-	except Exception,e: printe(e)
+	except Exception:
+		et, ev, tb = sys.exc_info()
+		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
+		printe(e)
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
@@ -313,7 +317,10 @@ def main():
 							exec("""%s.%s("%s")""" % (module, hook, reg))
 						elif command == "":
 							exec("""%s.%s("%s")""" % (module, hook, reg))
-		except Exception,e: printe(e)
+		except Exception:
+			et, ev, tb = sys.exc_info()
+			e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
+			printe(e)
 		except socket.error:
 			disconnect()
 			return 0
@@ -372,6 +379,9 @@ if __name__ == '__main__':
 				printa(sys.argv[0]+" configure		config maker")
 		else:
 			main()
-	except Exception,e: print(e)
+	except Exception:
+		et, ev, tb = sys.exc_info()
+		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
+		printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 	sys.exit(2)
