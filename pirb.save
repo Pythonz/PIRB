@@ -1,0 +1,104 @@
+#!/bin/sh
+case $1 in
+	start)
+		if [ ! -f pirb.pid ]; then
+			if [ -f pirb.pyc ]; then
+				rm -rf pirb.pyc
+			fi
+			python pirb.py >> /dev/null &
+			pid=$!
+			echo $pid > pirb.pid
+			echo "PIRB started into background (PID: $pid)"
+		else
+			pid=$(cat pirb.pid)
+			status="false"
+			for data in $(ps | grep $pid); do
+				status="true"
+			done
+			if [ $status = "false" ]; then
+				rm -f pirb.pid
+				sh pirb start
+			else
+				echo "PIRB is already running"
+			fi
+		fi
+		;;
+	stop)
+		if [ -f pirb.pid ]; then
+			pid=$(cat pirb.pid)
+			kill -9 $pid
+			rm -f pirb.pid
+			rm -f src/*.pyc
+			rm -f modules/*.pyc
+			if [ -f pirb.pyc ]; then
+				rm -f pirb.pyc
+			fi
+			echo "PIRB is stopped (PID: $pid)"
+		else
+			echo "PIRB is not running"
+		fi
+		;;
+	restart)
+		if [ -f pirb.pid ]; then
+			sh pirb stop
+			sh pirb start
+		else
+			sh pirb start
+		fi
+		;;
+	debug)
+		while [ 1 ]; do
+			if [ -f pirb.pyc ]; then
+				rm -f pirb.pyc
+			fi
+			python pirb.py
+			rm -f src/*.pyc
+			rm -f modules/*.pyc
+			if [ -f pirb.pyc ]; then
+				rm -f pirb.pyc
+			fi
+		done
+		;;
+	update)
+		if [ $(curl         update)
+                running="false"
+                if [ -f pirb.pid ]; then
+                        sh pirb stop
+                        running="true"
+                fi
+                git add configs/*.conf database/*.db modules/*.py
+                git commit -m 'Save'
+                git pull
+                if [ $running = "true" ]; then
+                        sh pirb start
+                fi
+                ;
+		running="false"
+		if [ -f pirb.pid ]; then
+			sh pirb stop
+			running="true"
+		fi
+		git add configs/*.conf database/*.db modules/*.py
+		git commit -m 'Save'
+		git pull
+		if [ $running = "true" ]; then
+			sh pirb start
+		fi
+		;;
+	status)
+		if [ -f pirb.pid ]; then
+			pid=$(cat pirb.pid)
+			status="PIRB seems to be crashed"
+			for data in $(ps | grep $pid); do
+				status="PIRB is running"
+			done
+		else
+			status="PIRB is not running"
+		fi
+		echo $status
+		;;
+	*)
+		echo "start | stop | restart | debug | update | status"
+		;;
+esac
+
