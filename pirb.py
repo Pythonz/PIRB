@@ -159,6 +159,7 @@ def main():
 			_ip += 1
 			if len(c.get("SERVER", "bind").split()) == _ip:
 				_ip = 0
+		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		if c.get("BOT", "identd") == "oidentd":
 			identfile = os.environ['HOME']+"/.oidentd.conf"
 			file = open(identfile, "r")
@@ -167,13 +168,8 @@ def main():
 			file = open(identfile, "w")
 			file.write('global { reply "%s" }' % c.get("BOT", "username"))
 			file.close()
-		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		mail('NICK '+_botnick)
 		mail('USER '+c.get("BOT", "username")+' '+c.get("SERVER", "address")+' MechiSoft :'+c.get("BOT", "realname"))
-		if c.get("BOT", "identd") == "oidentd":
-			file = open(identfile, "w")
-			file.write(content)
-			file.close()
 		thread.start_new_thread(keepnick, ())
 	except Exception:
 		et, ev, tb = sys.exc_info()
@@ -193,6 +189,11 @@ def main():
 			for line in line.rstrip().split("\n"):
 				reg = line.rstrip()
 				printc(line.rstrip())
+				if line.split()[1] == "001":
+					if c.get("BOT", "identd") == "oidentd":
+						file = open(identfile, "w")
+						file.write(content)
+						file.close()
 				if line.split()[1] == ":Closing":
 					disconnect()
 					return 0
