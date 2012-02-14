@@ -160,8 +160,20 @@ def main():
 			if len(c.get("SERVER", "bind").split()) == _ip:
 				_ip = 0
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
+		if c.get("BOT", "identd") == "oidentd":
+			identfile = os.environ['HOME']+"/.oidentd.conf"
+			file = open(identfile, "r")
+			content = file.read()
+			file.close()
+			file = open(identfile, "w")
+			file.write('global { reply "%s" }' % c.get("BOT", "username"))
+			file.close()
 		mail('NICK '+_botnick)
 		mail('USER '+c.get("BOT", "username")+' '+c.get("SERVER", "address")+' MechiSoft :'+c.get("BOT", "realname"))
+		if c.get("BOT", "identd") == "oidentd":
+			file = open(identfile, "w")
+			file.write(content)
+			file.close()
 		thread.start_new_thread(keepnick, ())
 	except Exception:
 		et, ev, tb = sys.exc_info()
@@ -363,6 +375,7 @@ if __name__ == '__main__':
 				c.set("BOT", "realname", raw_input(cadd+"Realname: "+cdel))
 				c.set("BOT", "channels", raw_input(cadd+"Channels to join on startup (seperate with ,): "+cdel))
 				c.set("BOT", "debug", raw_input(cadd+"Debug (True/False): "+cdel))
+				c.set("BOT", "identd", raw_input(cadd+"Identd (None/builtin/oidentd): "+cdel))
 				printc("So lets go to the management... The admin settings:")
 				c.set("ADMIN", "password", raw_input(cadd+"Password to use admin commands: "+cdel))
 				c.set("ADMIN", "auth", raw_input(cadd+"Auth (nickserv nick or quakenet auth, replaces password at some commands): "+cdel))
