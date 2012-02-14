@@ -35,6 +35,7 @@ c = ConfigParser.RawConfigParser()
 c.read("configs/main.conf")
 
 _ip = 0
+lasterror = None
 
 def mail(arg):
  try:
@@ -121,6 +122,7 @@ def disconnect():
 def main():
 	c.read("configs/main.conf")
 	global _ip
+	global lasterror
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -164,7 +166,9 @@ def main():
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
-		printe(e)
+		if e != lasterror:
+			lasterror = e
+			printe(e)
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
@@ -318,7 +322,9 @@ def main():
 		except Exception:
 			et, ev, tb = sys.exc_info()
 			e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
-			printe(e)
+			if e != lasterror:
+				lasterror = e
+				printe(e)
 		except socket.error:
 			disconnect()
 			return 0
