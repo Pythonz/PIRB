@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 from pirb import bind,put,putf,c,printe,printa,printc,shell
-import thread,socket,ConfigParser,hashlib,os,urllib2
+import thread,socket,ConfigParser,hashlib,os,urllib2,sys,sqlite3
 
 def load(): pass
 
@@ -22,7 +22,7 @@ class Telnet:
 			rc.listen(100)
 			while 1:
 				(client, address) = rc.accept()
-				thread.start_new_thread(self.client,(client,address,))
+				thread.start_new_thread(self.client,(client,address[0],))
 
 			rc.close()
 		except Exception,e:
@@ -48,7 +48,10 @@ class Telnet:
 			while 1:
 				raw = sock.recv(1024)
 				data = raw.rstrip()
-				if data != "":
+				if not data:
+					printc("!! losed connection with "+addr+ " !!")
+					sock.close()
+				if data:
 					cmd = data.split()[0].lower()
 					if cmd == "crypt":
 						sha = hashlib.sha1()
