@@ -11,7 +11,11 @@ class Telnet:
 
 	def pirb(self):
 		try:
-			rc = socket.socket()
+			if c.getboolean("SERVER", "ipv6"):
+				rc = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+			else:
+				rc = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+			rc.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 			if self.ip != "" and self.port != "":
 				rc.bind((self.ip, int(self.port)))
 

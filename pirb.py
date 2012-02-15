@@ -141,6 +141,7 @@ def main():
 	else:
 		__builtin__.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
+		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		for source in os.listdir("src"):
 			if source != "__init__.py" and source.endswith(".py"):
 				exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
