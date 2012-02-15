@@ -22,7 +22,7 @@ class Telnet:
 			rc.listen(100)
 			while 1:
 				(client, address) = rc.accept()
-				thread.start_new_thread(self.client,(client,))
+				thread.start_new_thread(self.client,(client,address,))
 
 			rc.close()
 		except Exception,e:
@@ -32,15 +32,18 @@ class Telnet:
 		sock.send("%s\n" % text)
 
 
-	def client(self,sock):
+	def client(self,sock,addr):
 		try:
+			printc("!! conntected with "+addr+" !!")
 			self.send(sock,"Hello. I am %s." % c.get("BOT","username"))
 			self.send(sock,"Welcome to the remote interface of PIRB.")
 			self.send(sock,"Please enter the administrators password to unlock!")
 			if str(sock.recv(100)).rstrip() == c.get("ADMIN", "password"):
 				self.send(sock,"Access granted.")
+				printc("!! "+addr+" logged in !!")
 			else:
 				self.send(sock,"Access denied.")
+				printc("!! "+addr+" failed login !!")
 				sock.close()
 			while 1:
 				raw = sock.recv(1024)
