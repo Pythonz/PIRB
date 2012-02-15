@@ -107,6 +107,7 @@ class Telnet:
 									shell("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
 							put("QUIT :Updating...")
 							sock.close()
+							s.close()
 							shell("sh pirb restart")
 						else: self.send(sock, "No update available.")
 					elif cmd == "version":
