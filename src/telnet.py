@@ -22,7 +22,7 @@ class Telnet:
 			rc.listen(100)
 			while 1:
 				(client, address) = rc.accept()
-				thread.start_new_thread(self.client,(client,address[0],))
+				thread.start_new_thread(self.client,(client,address[0],rc))
 
 			rc.close()
 		except Exception,e:
@@ -32,7 +32,7 @@ class Telnet:
 		sock.send("%s\n" % text)
 
 
-	def client(self,sock,addr):
+	def client(self,sock,addr,servsock):
 		try:
 			printc("!! conntected with "+addr+" !!")
 			self.send(sock,"Hello. I am %s." % c.get("BOT","username"))
@@ -63,6 +63,8 @@ class Telnet:
 					elif cmd == "restart":
 						if os.access("pirb.pid", os.F_OK):
 							self.send(sock,"Restarting ...")
+							servsock.close()
+							sock.close()
 							shell("sh pirb restart")
 						else: self.send(sock,"Cannot restart when debug is running")
 					elif cmd == "update":
@@ -106,8 +108,8 @@ class Telnet:
 									self.send(sock, " - Insert 'user/{0}'".format(doc))
 									shell("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
 							put("QUIT :Updating...")
+							servsock.close()
 							sock.close()
-							s.close()
 							shell("sh pirb restart")
 						else: self.send(sock, "No update available.")
 					elif cmd == "version":
@@ -118,6 +120,8 @@ class Telnet:
 						self.send(sock,"Bye :(")
 						sock.close()
 					elif cmd == "die":
+						servsock.close()
+						sock.close()
 						if os.access("pirb.pid", os.F_OK):
 							shell("sh pirb stop")
 						else: sys.exit(2)
