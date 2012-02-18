@@ -10,7 +10,7 @@ def ctcp(target,text):
 	put(u"PRIVMSG %s :\u0001%s\u0001" % (target,text))
 
 def notice(target,text):
-	put("PRIVMSG %s :%s" % (target,text))
+	put("NOTICE %s :%s" % (target,text))
 
 def ping(nick,uhost,arg):
 	ctcp(nick, "PONG")
