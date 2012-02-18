@@ -9,16 +9,28 @@ def load():
 def ctcp(target,text):
 	put(u"PRIVMSG %s :\u0001%s\u0001" % (target,text))
 
+def notice(target,text):
+	put("PRIVMSG %s :%s" % (target,text))
+
 def ping(nick,uhost,arg):
 	ctcp(nick, "PONG")
 
 def version(nick,uhost,arg):
-	ctcp(nick, "This is my answer")
+	file = open("version", "r")
+	_version = file.read()
+	file.close()
+	notice(nick, "PIRB "+_version)
 
 def userinfo(nick,uhost,arg):
-	ctcp(nick, "This is my answer")
+	file = open("version", "r")
+	_version = file.read()
+	file.close()
+	notice(nick, "PIRB "+_version)
 
 def finger(nick,uhost,arg):
-	ctcp(nick, "This is my answer")
+	file = open("version", "r")
+	_version = file.read()
+	file.close()
+	notice(nick, "PIRB "+_version)
 
 import pirb
