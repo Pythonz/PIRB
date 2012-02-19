@@ -12,6 +12,7 @@ import subprocess
 import __builtin__
 import time
 import traceback
+import ssl
 
 __app__ = "PIRB"
 
@@ -137,9 +138,15 @@ def main():
 	__builtin__._chandb = sqlite3.connect("database/chan.db")
 	_chandb.isolation_level = None
 	if c.getboolean("SERVER", "ipv6") and socket.has_ipv6:
-		__builtin__.s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
+		if c.getboolean("SERVER", "ssl"):
+			__builtin__.s = ssl.wrap_socket(socket.socket(socket.AF_INET6, socket.SOCK_STREAM))
+		else:
+			__builtin__.s = socket.socket(socket.AF_INET6, socket.SOCK_STREAM)
 	else:
-		__builtin__.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+		if c.getboolean("SERVER", "ssl"):
+			__builtin__.s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
+		else:
+			__builtin__.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		for source in os.listdir("src"):
@@ -357,6 +364,7 @@ if __name__ == '__main__':
 				c.set("SERVER", "reconnect", raw_input(cadd+"Time to wait before reconnect: "+cdel))
 				c.set("SERVER", "bind", raw_input(cadd+"IP to bind to (leave it blank when you don't need it): "+cdel))
 				c.set("SERVER", "ipv6", raw_input(cadd+"IPv6 (True/False): "+cdel))
+				c.set("SERVER", "ssl", raw_input(cadd+"SSL (True/False): "+cdel))
 				printc("So now the server settings are ready. Lets go to bot settings:")
 				c.set("BOT", "nick", raw_input(cadd+"Nick: "+cdel))
 				c.set("BOT", "username", raw_input(cadd+"Username (ident): "+cdel))
