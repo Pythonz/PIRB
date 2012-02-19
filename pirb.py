@@ -177,7 +177,7 @@ def main():
 			file.close()
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		mail('NICK '+_botnick)
-		mail('USER '+c.get("BOT", "username")+' '+c.get("SERVER", "address")+' MechiSoft :'+c.get("BOT", "realname"))
+		mail('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
 		thread.start_new_thread(keepnick, ())
 	except Exception:
 		et, ev, tb = sys.exc_info()
