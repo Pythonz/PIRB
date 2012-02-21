@@ -61,7 +61,7 @@ def fwrite(name,text):
 def bind(function,event,command=""):
 	frame = inspect.stack()[1]
 	module = inspect.getmodule(frame[0])
-	_cache.execute("insert into binds values ('%s','%s','%s','%s')" % (function,module,event,command))
+	_cache.execute("insert into binds values ('%s','%s','%s','%s')" % (function,module.__name__,event,command))
 
 def put(arg):
 	try:

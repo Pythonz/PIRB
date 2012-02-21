@@ -7,5 +7,3 @@ def load():
 def uname(nick,host,chan,arg):
 	sysinfo = ' '.join(os.uname())
 	put("PRIVMSG %s :%s" % (chan, sysinfo))
-
-import pirb
