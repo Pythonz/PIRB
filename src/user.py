@@ -1,5 +1,4 @@
 from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
-import pirb
 
 def load():
 	bind("nick_in_use","raw","433")
@@ -58,3 +57,5 @@ def on_nickchange(text):
 def getauth(nick):
 	for data in _userdb.execute("select auth from auth where nick='%s'" % nick):
 		return data[0]
+
+import pirb

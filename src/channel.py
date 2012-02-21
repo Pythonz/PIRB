@@ -1,5 +1,4 @@
 from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
-import pirb
 from src.user import getauth
 from fnmatch import fnmatch as wmatch
 from src.irc import irc_send
@@ -432,3 +431,5 @@ def channel_msg_auth(nick,host,arg):
 			putf("MODE %s +v %s" % (chan,nick))
 	else:
 		irc_send(nick, "invalid channel")
+
+import pirb

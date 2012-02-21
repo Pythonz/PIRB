@@ -1,5 +1,4 @@
 from pirb import bind,put,putf,c
-import pirb
 import os
 
 def load():
@@ -8,3 +7,5 @@ def load():
 def uname(nick,host,chan,arg):
 	sysinfo = ' '.join(os.uname())
 	put("PRIVMSG %s :%s" % (chan, sysinfo))
+
+import pirb

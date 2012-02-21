@@ -1,5 +1,4 @@
 from pirb import bind,put
-import pirb
 
 def load():
 	bind("ping","msg",u"\u0001PING\u0001")
@@ -33,3 +32,5 @@ def finger(nick,uhost,arg):
 	_version = file.read()
 	file.close()
 	notice(nick, "PIRB "+_version)
+
+import pirb

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 from pirb import bind,put,putf,c,printe,printa,printc,shell
-import pirb
 import thread,socket,ConfigParser,hashlib,os,urllib2,sys,sqlite3
 
 def load(): pass
@@ -144,3 +143,5 @@ class Telnet:
 		except Exception,e: printe(e)
 
 thread.start_new_thread(Telnet().pirb,())
+
+import pirb

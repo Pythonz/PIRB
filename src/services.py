@@ -1,10 +1,9 @@
 from pirb import put,bind,c,putf
-import pirb
 
 def load():
-	bind("nick_identify","not")
-	bind("quakenet_auth","raw","376")
-	bind("quakenet_mode_x","not","You")
+	bind("nick_identify","src_services","not")
+	bind("quakenet_auth","src_services","raw","376")
+	bind("quakenet_mode_x","src_services","not","You")
 
 def nick_identify(nick, uhost, target, arg):
 	if nick == "NickServ":
@@ -23,3 +22,5 @@ def quakenet_mode_x(nick,host,target,arg):
         react = "are now logged in as "+c.get("SERVICES","quakenet").split()[0]+"."
         if arg == react:
                 putf("MODE %s +x" % target)
+
+import pirb
