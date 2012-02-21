@@ -1,9 +1,9 @@
 from pirb import put,bind,c,putf
 
 def load():
-	bind("nick_identify","src_services","not")
-	bind("quakenet_auth","src_services","raw","376")
-	bind("quakenet_mode_x","src_services","not","You")
+	bind("nick_identify","not")
+	bind("quakenet_auth","raw","376")
+	bind("quakenet_mode_x","not","You")
 
 def nick_identify(nick, uhost, target, arg):
 	if nick == "NickServ":
