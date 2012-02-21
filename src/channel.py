@@ -431,3 +431,5 @@ def channel_msg_auth(nick,host,arg):
 			putf("MODE %s +v %s" % (chan,nick))
 	else:
 		irc_send(nick, "invalid channel")
+
+import pirb

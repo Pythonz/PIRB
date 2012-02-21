@@ -57,3 +57,5 @@ def on_nickchange(text):
 def getauth(nick):
 	for data in _userdb.execute("select auth from auth where nick='%s'" % nick):
 		return data[0]
+
+import pirb
