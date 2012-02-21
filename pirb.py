@@ -39,12 +39,6 @@ c.read("configs/main.conf")
 _ip = 0
 lasterror = None
 
-def mail(arg):
- try:
-	s.send(arg.rstrip()+"\n")
-	printa(arg.rstrip())
- except: pass
-
 def shell(text):
 	subprocess.Popen(text+" >> /dev/null", shell=True).wait()
 
@@ -179,8 +173,8 @@ def main():
 			file.write('global { reply "%s" }' % c.get("BOT", "username"))
 			file.close()
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
-		mail('NICK '+_botnick)
-		mail('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
+		putf('NICK '+_botnick)
+		putf('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
 		thread.start_new_thread(keepnick, ())
 	except Exception:
 		et, ev, tb = sys.exc_info()
@@ -209,7 +203,7 @@ def main():
 					disconnect()
 					return 0
 				if line.split()[0]=='PING':
-					mail('PONG '+line[5:])
+					putf('PONG '+line[5:])
 				line = line.rstrip()[1:]
 				if line.split()[1].lower() == "privmsg":
 					nick = line.split("!")[0]
