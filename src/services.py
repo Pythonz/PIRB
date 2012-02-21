@@ -22,5 +22,3 @@ def quakenet_mode_x(nick,host,target,arg):
         react = "are now logged in as "+c.get("SERVICES","quakenet").split()[0]+"."
         if arg == react:
                 putf("MODE %s +x" % target)
-
-import pirb

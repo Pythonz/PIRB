@@ -143,5 +143,3 @@ class Telnet:
 		except Exception,e: printe(e)
 
 thread.start_new_thread(Telnet().pirb,())
-
-import pirb

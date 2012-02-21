@@ -45,5 +45,3 @@ def irc_version(nick,uhost,args):
 	_version = open("version", "r")
 	irc_send(nick, "PIRB {0}".format(_version.read()))
 	_version.close()
-
-import pirb

@@ -32,5 +32,3 @@ def finger(nick,uhost,arg):
 	_version = file.read()
 	file.close()
 	notice(nick, "PIRB "+_version)
-
-import pirb
