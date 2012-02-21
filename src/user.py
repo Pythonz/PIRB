@@ -4,7 +4,7 @@ def load():
 	bind("nick_in_use","raw","433")
 	bind("on_quit","raw","QUIT")
 	bind("whois_330","raw","330")
-	bind("who_354", "src_user", "raw", "354")
+	bind("who_354", "raw", "354")
 	bind("check_user","raw","352")
 	bind("on_366","raw","366")
 	bind("on_nickchange","raw","NICK")
