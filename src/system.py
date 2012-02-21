@@ -1,4 +1,5 @@
 from pirb import bind,put,putf,c
+import pirb
 import os
 
 def load():

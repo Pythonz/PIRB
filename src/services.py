@@ -1,4 +1,5 @@
 from pirb import put,bind,c,putf
+import pirb
 
 def load():
 	bind("nick_identify","not")

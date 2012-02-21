@@ -1,4 +1,5 @@
 from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
+import pirb
 
 def load():
 	bind("nick_in_use","raw","433")

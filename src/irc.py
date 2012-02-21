@@ -1,4 +1,5 @@
 from pirb import put,putf,bind,c,printa,printc,printe
+import pirb
 from time import sleep
 from fnmatch import fnmatch as wmatch
 

@@ -1,4 +1,5 @@
 from pirb import bind,put
+import pirb
 
 def load():
 	bind("ping","msg",u"\u0001PING\u0001")

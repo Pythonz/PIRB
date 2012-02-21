@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 from pirb import bind,put,putf,c,printe,printa,printc,shell
+import pirb
 import thread,socket,ConfigParser,hashlib,os,urllib2,sys,sqlite3
 
 def load(): pass
