@@ -3,10 +3,10 @@ from time import sleep
 from fnmatch import fnmatch as wmatch
 
 def load():
-	bind("irc_botnick","src_irc","pub","$botnick")
-	bind("irc_botmode","src_irc","raw","001")
-	bind("irc_bans","src_irc","raw","352")
-	bind("irc_version","src_irc","msg","version")
+	bind("irc_botnick","pub","$botnick")
+	bind("irc_botmode","raw","001")
+	bind("irc_bans","raw","352")
+	bind("irc_version","msg","version")
 
 def irc_botnick(nick,host,chan,arg):
 	for data in _cache.execute("select name from botnick"):
@@ -45,5 +45,3 @@ def irc_version(nick,uhost,args):
 	_version = open("version", "r")
 	irc_send(nick, "PIRB {0}".format(_version.read()))
 	_version.close()
-
-import pirb

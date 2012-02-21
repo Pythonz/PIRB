@@ -13,6 +13,7 @@ import __builtin__
 import time
 import traceback
 import ssl
+import inspect
 
 __app__ = "PIRB"
 
@@ -57,7 +58,9 @@ def fwrite(name,text):
 	f.write(text+"\n")
 	f.close()
 
-def bind(function,module,event,command=""):
+def bind(function,event,command=""):
+	frame = inspect.stack()[1]
+	module = inspect.getmodule(frame[0])
 	_cache.execute("insert into binds values ('%s','%s','%s','%s')" % (function,module,event,command))
 
 def put(arg):
@@ -151,14 +154,14 @@ def main():
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		for source in os.listdir("src"):
 			if source != "__init__.py" and source.endswith(".py"):
-				exec("from src import %s as src_%s" % (source.split(".py")[0],source.split(".py")[0]))
-				exec("src_%s.load()" % source.split(".py")[0])
+				exec("import src.%s" % source.split(".py")[0])
+				exec("src.%s.load()" % source.split(".py")[0])
 				_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
 				printa("src %s loaded" % source.split(".py")[0])
 		for mod in os.listdir("modules"):
 			if mod != "__init__.py" and mod.endswith(".py"):
-				exec("from modules import %s" % mod.split(".py")[0])
-				exec("%s.load()" % mod.split(".py")[0])
+				exec("import modules.%s" % mod.split(".py")[0])
+				exec("modules.%s.load()" % mod.split(".py")[0])
 				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 				printa("module %s loaded" % mod.split(".py")[0])
 		if c.get("SERVER", "bind") != "":
@@ -215,7 +218,7 @@ def main():
 					arg = ' '.join(line.split()[3:])[0:][1:]
 					cmd = line.split()[3][1:]
 					if arg.split()[0].lower() == "reload" and line.split()[2][0] != "#":
-						if src_user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
+						if src.user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
 							c.read("configs/main.conf")
 							put("NOTICE %s :[run] config reloaded" % nick)
 							_cache.execute("delete from binds")
@@ -229,7 +232,8 @@ def main():
 								loaded = loaded[0]
 								if not os.access("src/%s.py" % loaded, os.F_OK):
 									src_unload.append(loaded)
-									exec("del src_%s" % loaded)
+									exec("del src.%s" % loaded)
+									exec("""del sys.modules["src.%s"]""" % loaded)
 									_cache.execute("delete from src where name='%s'" % loaded)
 									printa("src %s unloaded" % loaded)
 							for source in os.listdir("src"):
@@ -240,20 +244,21 @@ def main():
 										entry = True
 									if entry is False:
 										src_load.append(name)
-										exec("from src import %s as src_%s" % (name,name))
-										exec("src_%s.load()" % name)
+										exec("import src.%s" % name)
+										exec("src.%s.load()" % name)
 										_cache.execute("insert into src values ('%s')" % name)
 										printa("src %s loaded" % name)
 									else:
 										src_reload.append(name)
-										exec("reload(src_%s)" % name)
-										exec("src_%s.load()" % name)
+										exec("reload(src.%s)" % name)
+										exec("src.%s.load()" % name)
 										printa("src %s reloaded" % name)
 							for loaded in _cache.execute("select name from modules"):
 								loaded = loaded[0]
 								if not os.access("modules/%s.py" % loaded, os.F_OK):
 									mod_unload.append(loaded)
-									exec("del %s" % loaded)
+									exec("del modules.%s" % loaded)
+									exec("""del sys.modules["modules.%s"]""" % loaded)
 									_cache.execute("delete from modules where name='%s'" % loaded)
 									printa("module %s unloaded" % loaded)
 							for source in os.listdir("modules"):
@@ -264,14 +269,14 @@ def main():
 										entry = True
 									if entry is False:
 										mod_load.append(name)
-										exec("from modules import %s" % name)
-										exec("%s.load()" % name)
+										exec("import modules.%s" % name)
+										exec("modules.%s.load()" % name)
 										_cache.execute("insert into modules values ('%s')" % name)
 										printa("module %s loaded" % name)
 									else:
 										mod_reload.append(name)
-										exec("reload(%s)" % name)
-										exec("%s.load()" % name)
+										exec("reload(modules.%s)" % name)
+										exec("modules.%s.load()" % name)
 										printa("module %s reloaded" % name)
 							put("NOTICE %s :[src] %s loaded" % (nick,', '.join(src_load)))
 							put("NOTICE %s :[src] %s reloaded" % (nick,', '.join(src_reload)))
@@ -280,7 +285,7 @@ def main():
 							put("NOTICE %s :[module] %s reloaded" % (nick,', '.join(mod_reload)))
 							put("NOTICE %s :[module] %s unloaded" % (nick,', '.join(mod_unload)))
 					if arg.split()[0].lower() == "restart" and line.split()[2][0] != "#":
-						if src_user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
+						if src.user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
 							putf("QUIT :Restart ... I\'ll be back in %s seconds!" % c.get("SERVER", "reconnect"))
 							disconnect()
 							return 0

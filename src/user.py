@@ -1,14 +1,14 @@
 from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
 
 def load():
-	bind("nick_in_use","src_user","raw","433")
-	bind("on_quit","src_user","raw","QUIT")
-	bind("whois_330","src_user","raw","330")
+	bind("nick_in_use","raw","433")
+	bind("on_quit","raw","QUIT")
+	bind("whois_330","raw","330")
 	bind("who_354", "src_user", "raw", "354")
-	bind("check_user","src_user","raw","352")
-	bind("on_366","src_user","raw","366")
-	bind("on_nickchange","src_user","raw","NICK")
-	bind("whois_307","src_user","raw","307")
+	bind("check_user","raw","352")
+	bind("on_366","raw","366")
+	bind("on_nickchange","raw","NICK")
+	bind("whois_307","raw","307")
 
 def nick_in_use(text):
 	for data in _cache.execute("select name from botnick"):
@@ -57,5 +57,3 @@ def on_nickchange(text):
 def getauth(nick):
 	for data in _userdb.execute("select auth from auth where nick='%s'" % nick):
 		return data[0]
-
-import pirb
