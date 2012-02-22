@@ -191,7 +191,7 @@ def main():
 			if not line:
 				disconnect()
 				return 0
-			for line in line.rstrip().split("\n"):
+			for line in line.splitlines():
 				reg = line.rstrip()
 				printc(line.rstrip())
 				if line.split()[1] == "001":
