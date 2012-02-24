@@ -14,6 +14,7 @@ import time
 import traceback
 import ssl
 import inspect
+import re
 
 __app__ = "PIRB"
 
@@ -322,9 +323,9 @@ def main():
 					if event == "raw":
 						cmdo = line.split()[1]
 						if command != "" and cmdo.lower() == command.lower():
-							exec("""%s.%s("%s")""" % (module, hook, reg))
+							exec("""%s.%s("%s")""" % (module, hook, re.escape(reg)))
 						elif command == "":
-							exec("""%s.%s("%s")""" % (module, hook, reg))
+							exec("""%s.%s("%s")""" % (module, hook, re.escape(reg)))
 		except Exception:
 			et, ev, tb = sys.exc_info()
 			e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
