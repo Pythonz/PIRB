@@ -124,7 +124,7 @@ def disconnect():
 
 def put_query():
 	try:
-		open(".put_query", "w").write()
+		open(".put_query", "w").write("")
 		data = open(".put_query", "r")
 		while 1:
 			for line in data.readlines():
