@@ -91,7 +91,7 @@ class Telnet:
 										if sql.startswith(str(__cache)+"_"):
 											self.send(sock, " - Insert 'cache/{0}'".format(sql))
 											shell("sqlite3 database/cache.db < database/updates/cache/{0}".format(sql))
-							___chan == os.listdir("database/updates/chan"):
+							___chan == os.listdir("database/updates/chan")
 							if __chan < len(___chan):
 								while __chan != len(___chan):
 									__chan += 1
@@ -99,7 +99,7 @@ class Telnet:
 										if sql.startswith(str(__chan)+"_"):
 											self.send(sock, " - Insert 'chan/{0}'".format(sql))
 											shell("sqlite3 database/chan.db < database/updates/chan/{0}".format(sql))
-							___user == os.listdir("database/updates/user"):
+							___user == os.listdir("database/updates/user")
 							if __user < len(___user):
 								while __user != len(___user):
 									__user += 1
