@@ -59,7 +59,7 @@ def bind(function,event,command=""):
 
 def put(arg):
 	try:
-		_cache.execute("insert into put_query(NULL, ?)", (arg))
+		_cache.execute("insert into put_query (message) values (?)", (arg))
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
@@ -119,6 +119,7 @@ def put_query():
 	try:
 		_db = sqlite3.connect("database/cache.db")
 		_db.isolation_level = None
+		_db.execute("truncate put_query")
 		while 1:
 			for data in _db.execute("select id,message from put_query"):
 				putf(data[1])
