@@ -213,19 +213,12 @@ def main():
 					cmd = line.split()[3][1:]
 					if arg.split()[0].lower() == "reload" and line.split()[2][0] != "#":
 						if src.user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
+							putf("NOTICE " + nick + " :Reloading ...")
 							c.read("configs/main.conf")
-							put("NOTICE %s :[run] config reloaded" % nick)
 							_cache.execute("delete from binds")
-							src_load = list()
-							src_reload = list()
-							src_unload = list()
-							mod_load = list()
-							mod_reload = list()
-							mod_unload = list()
 							for loaded in _cache.execute("select name from src"):
 								loaded = loaded[0]
 								if not os.access("src/%s.py" % loaded, os.F_OK):
-									src_unload.append(loaded)
 									exec("del src.%s" % loaded)
 									exec("""del sys.modules["src.%s"]""" % loaded)
 									_cache.execute("delete from src where name='%s'" % loaded)
@@ -237,20 +230,17 @@ def main():
 									for loaded in _cache.execute("select name from src where name='%s'" % name):
 										entry = True
 									if entry is False:
-										src_load.append(name)
 										exec("import src.%s" % name)
 										exec("src.%s.load()" % name)
 										_cache.execute("insert into src values ('%s')" % name)
 										printa("src %s loaded" % name)
 									else:
-										src_reload.append(name)
 										exec("reload(src.%s)" % name)
 										exec("src.%s.load()" % name)
 										printa("src %s reloaded" % name)
 							for loaded in _cache.execute("select name from modules"):
 								loaded = loaded[0]
 								if not os.access("modules/%s.py" % loaded, os.F_OK):
-									mod_unload.append(loaded)
 									exec("del modules.%s" % loaded)
 									exec("""del sys.modules["modules.%s"]""" % loaded)
 									_cache.execute("delete from modules where name='%s'" % loaded)
@@ -262,22 +252,15 @@ def main():
 									for loaded in _cache.execute("select name from modules where name='%s'" % name):
 										entry = True
 									if entry is False:
-										mod_load.append(name)
 										exec("import modules.%s" % name)
 										exec("modules.%s.load()" % name)
 										_cache.execute("insert into modules values ('%s')" % name)
 										printa("module %s loaded" % name)
 									else:
-										mod_reload.append(name)
 										exec("reload(modules.%s)" % name)
 										exec("modules.%s.load()" % name)
 										printa("module %s reloaded" % name)
-							put("NOTICE %s :[src] %s loaded" % (nick,', '.join(src_load)))
-							put("NOTICE %s :[src] %s reloaded" % (nick,', '.join(src_reload)))
-							put("NOTICE %s :[src] %s unloaded" % (nick,', '.join(src_unload)))
-							put("NOTICE %s :[module] %s loaded" % (nick,', '.join(mod_load)))
-							put("NOTICE %s :[module] %s reloaded" % (nick,', '.join(mod_reload)))
-							put("NOTICE %s :[module] %s unloaded" % (nick,', '.join(mod_unload)))
+							putf("NOTICE " + nick + " :Done.")
 					if arg.split()[0].lower() == "restart" and line.split()[2][0] != "#":
 						if src.user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
 							putf("QUIT :Restart ... I\'ll be back in %s seconds!" % c.get("SERVER", "reconnect"))
