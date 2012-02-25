@@ -59,7 +59,7 @@ def bind(function,event,command=""):
 
 def put(arg):
 	try:
-		_cache.execute("insert into put_query values (NULL, ?)", (arg))
+		_cache.execute("insert into put_query values (NULL, '%s')" % arg.replace("\'", "\\'"))
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
@@ -124,7 +124,7 @@ def put_query():
 			for data in _db.execute("select id,message from put_query"):
 				putf(data[1])
 				_db.execute("delete from put_query where id = '%s'" % data[0])
-				sleep(1)
+				time.sleep(1)
 		_db.close()
 	except Exception,e: printe(e)
 	except socket.error: pass

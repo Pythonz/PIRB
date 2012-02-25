@@ -60,7 +60,7 @@ class Telnet:
 					elif cmd == "put":
 						_cachedb = sqlite3.connect("database/cache.db")
 						_cachedb.isolation_level = None
-						_cachedb.execute("insert into put_query values (NULL, ?)", (data[4:]))
+						_cachedb.execute("insert into put_query values (NULL, '%s')" % str(data[4:]).replace("\'", "\\'"))
 						self.send(sock,"Sent: %s" % data[4:])
 					elif cmd == "restart":
 						if os.access("pirb.pid", os.F_OK):
