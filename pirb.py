@@ -14,6 +14,7 @@ import time
 import traceback
 import ssl
 import inspect
+import base64
 
 __app__ = "PIRB"
 
@@ -39,6 +40,12 @@ c.read("configs/main.conf")
 _ip = 0
 lasterror = None
 
+def encode(text):
+	return base64.encodestring(text).rstrip()
+
+def decode(text):
+	return base64.decodestring(text).rstrip()
+
 def shell(text):
 	subprocess.Popen(text+" >> /dev/null", shell=True).wait()
 
@@ -59,7 +66,7 @@ def bind(function,event,command=""):
 
 def put(arg):
 	try:
-		_cache.execute("insert into put_query values (NULL, '%s')" % arg.replace("\'", "\\'"))
+		_cache.execute("insert into put_query values (NULL, '%s')" % encode(arg))
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
@@ -122,7 +129,7 @@ def put_query():
 		_db.execute("delete from put_query")
 		while 1:
 			for data in _db.execute("select id,message from put_query"):
-				putf(data[1])
+				putf(decode(data[1]))
 				_db.execute("delete from put_query where id = '%s'" % data[0])
 				time.sleep(1)
 		_db.close()
