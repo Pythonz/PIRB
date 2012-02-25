@@ -132,6 +132,7 @@ def put_query():
 				putf(decode(data[1]))
 				_db.execute("delete from put_query where id = '%s'" % data[0])
 				time.sleep(1)
+			time.sleep(1)
 		_db.close()
 	except Exception,e: printe(e)
 	except socket.error: pass
