@@ -58,7 +58,7 @@ class Telnet:
 						sha.update(data[6:])
 						self.send(sock,"Hash: %s" % str(sha.hexdigest()))
 					elif cmd == "put":
-						putf(data[4:])
+						put(data[4:])
 						self.send(sock,"Sent: %s" % data[4:])
 					elif cmd == "restart":
 						if os.access("pirb.pid", os.F_OK):
