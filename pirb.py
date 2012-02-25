@@ -229,7 +229,7 @@ def main():
 					cmd = line.split()[3][1:]
 					if arg.split()[0].lower() == "reload" and line.split()[2][0] != "#":
 						if src.user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
-							putf("NOTICE " + nick + " :Reloading ...")
+							put("NOTICE " + nick + " :Reloading ...")
 							c.read("configs/main.conf")
 							_cache.execute("delete from binds")
 							for loaded in _cache.execute("select name from src"):
@@ -276,7 +276,7 @@ def main():
 										exec("reload(modules.%s)" % name)
 										exec("modules.%s.load()" % name)
 										printa("module %s reloaded" % name)
-							putf("NOTICE " + nick + " :Done.")
+							put("NOTICE " + nick + " :Done.")
 					if arg.split()[0].lower() == "restart" and line.split()[2][0] != "#":
 						if src.user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
 							putf("QUIT :Restart ... I\'ll be back in %s seconds!" % c.get("SERVER", "reconnect"))
