@@ -76,37 +76,37 @@ class Telnet:
 						_web.close()
 						if _old != _new:
 							self.send(sock, "{0} -> {1}".format(_old, _new))
-							__cache = 0
-							for doc in os.listdir("database/updates/cache"):
-								__cache += 1
-							__chan = 0
-							for doc in os.listdir("database/updates/chan"):
-								__chan += 1
-							__user = 0
-							for doc in os.listdir("database/updates/user"):
-								__user += 1
+							__cache = len(os.listdir("database/updates/cache"))
+							__chan = len(os.listdir("database/updates/chan"))
+							__user = len(os.listdir("database/updates/user"))
 							shell("git add .")
 							shell("git rm --cached database/*.db")
 							shell("git commit -m 'Save'")
 							shell("git pull")
-							___cache = 0
-							for doc in os.listdir("database/updates/cache"):
-								___cache += 1
-								if __cache < ___cache:
-									self.send(sock, " - Insert 'cache/{0}'".format(doc))
-									shell("sqlite3 database/cache.db < database/updates/cache/{0}".format(doc))
-							___chan = 0
-							for doc in os.listdir("database/updates/chan"):
-								___chan += 1
-								if __chan < ___chan:
-									self.send(sock, " - Insert 'chan/{0}'".format(doc))
-									shell("sqlite3 database/chan.db < database/updates/chan/{0}".format(doc))
-							___user = 0
-							for doc in os.listdir("database/updates/user"):
-								___user += 1
-								if __user < ___user:
-									self.send(sock, " - Insert 'user/{0}'".format(doc))
-									shell("sqlite3 database/user.db < database/updates/user/{0}".format(doc))
+							___cache = os.listdir("database/updates/cache")
+							if __cache < len(___chache):
+								while __cache != len(___cache):
+									__cache += 1
+									for sql in ___cache:
+										if sql.startswith(str(__cache)+"_"):
+											self.send(sock, " - Insert 'cache/{0}'".format(sql))
+											shell("sqlite3 database/cache.db < database/updates/cache/{0}".format(sql))
+							___chan == os.listdir("database/updates/chan"):
+							if __chan < len(___chan):
+								while __chan != len(___chan):
+									__chan += 1
+									for sql in ___chan:
+										if sql.startswith(str(__chan)+"_"):
+											self.send(sock, " - Insert 'chan/{0}'".format(sql))
+											shell("sqlite3 database/chan.db < database/updates/chan/{0}".format(sql))
+							___user == os.listdir("database/updates/user"):
+							if __user < len(___user):
+								while __user != len(___user):
+									__user += 1
+									for sql in ___user:
+										if sql.startswith(str(__user)+"_"):
+											self.send(sock, " - Insert 'user/{0}'".format(sql))
+											shell("sqlite3 database/user.db < database/updates/user/{0}".format(sql))
 							put("QUIT :Updating...")
 							servsock.close()
 							sock.close()

@@ -59,9 +59,7 @@ def bind(function,event,command=""):
 
 def put(arg):
 	try:
-		s.send(arg.rstrip()+"\n")
-		printa(arg.rstrip())
-		time.sleep(1)
+		_cache.execute("insert into put_query(NULL, ?)", (arg))
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
@@ -111,6 +109,22 @@ def disconnect():
 		printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
 		time.sleep(int(c.get("SERVER", "reconnect")))
 		main()
+	except Exception,e: printe(e)
+	except socket.error: pass
+	except KeyboardInterrupt:
+		printe("\nAborting ... CTRL + C")
+		sys.exit(2)
+
+def put_query():
+	try:
+		_db = sqlite3.connect("database/cache.db")
+		_db.isolation_level = None
+		while 1:
+			for data in _db.execute("select id,message from put_query"):
+				putf(data[1])
+				_db.execute("delete from put_query where id = '%s'" % data[0])
+				sleep(1)
+		_db.close()
 	except Exception,e: printe(e)
 	except socket.error: pass
 	except KeyboardInterrupt:
@@ -176,6 +190,7 @@ def main():
 		putf('NICK '+_botnick)
 		putf('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
 		thread.start_new_thread(keepnick, ())
+		thread.start_new_thread(put_query, ())
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
