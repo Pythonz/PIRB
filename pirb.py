@@ -66,7 +66,7 @@ def bind(function,event,command=""):
 
 def put(arg):
 	try:
-		open(".put_query", "ab").write(arg+"\n")
+		open(".put_query", "a").write(arg+"\n")
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
@@ -125,13 +125,13 @@ def disconnect():
 def put_query():
 	try:
 		open(".put_query", "w").write()
-		file = open(".put_query", "r")
+		data = open(".put_query", "r")
 		while 1:
-			for line in file.readlines():
+			for line in data.readlines():
 				putf(line.rstrip())
 				time.sleep(1)
 			time.sleep(1)
-		file.close()
+		data.close()
 	except Exception,e: printe(e)
 	except socket.error: pass
 	except KeyboardInterrupt:
