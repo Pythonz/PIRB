@@ -59,7 +59,7 @@ def bind(function,event,command=""):
 
 def put(arg):
 	try:
-		_cache.execute("insert into put_query (message) values (?)", (arg))
+		_cache.execute("insert into put_query values (NULL, ?)", (arg))
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
