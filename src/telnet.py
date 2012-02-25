@@ -58,9 +58,7 @@ class Telnet:
 						sha.update(data[6:])
 						self.send(sock,"Hash: %s" % str(sha.hexdigest()))
 					elif cmd == "put":
-						_cachedb = sqlite3.connect("database/cache.db")
-						_cachedb.isolation_level = None
-						_cachedb.execute("insert into put_query values (NULL, '%s')" % str(data[4:]).replace("\'", "\\'"))
+						open(".put_query", "a").write(data[4:]+"\n")
 						self.send(sock,"Sent: %s" % data[4:])
 					elif cmd == "restart":
 						if os.access("pirb.pid", os.F_OK):
