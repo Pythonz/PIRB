@@ -66,7 +66,7 @@ def bind(function,event,command=""):
 
 def put(arg):
 	try:
-		_cache.execute("insert into put_query values (NULL, '%s')" % encode(arg))
+		open(".put_query", "ab").write(arg+"\n")
 	except Exception,e: printe(e)
 	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
 
@@ -124,16 +124,14 @@ def disconnect():
 
 def put_query():
 	try:
-		_db = sqlite3.connect("database/cache.db")
-		_db.isolation_level = None
-		_db.execute("delete from put_query")
+		open(".put_query", "w").write()
+		file = open(".put_query", "r")
 		while 1:
-			for data in _db.execute("select id,message from put_query"):
-				putf(decode(data[1]))
-				_db.execute("delete from put_query where id = '%s'" % data[0])
+			for line in file.readlines():
+				putf(line.rstrip())
 				time.sleep(1)
 			time.sleep(1)
-		_db.close()
+		file.close()
 	except Exception,e: printe(e)
 	except socket.error: pass
 	except KeyboardInterrupt:
