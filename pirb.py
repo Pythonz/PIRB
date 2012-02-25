@@ -119,7 +119,7 @@ def put_query():
 	try:
 		_db = sqlite3.connect("database/cache.db")
 		_db.isolation_level = None
-		_db.execute("truncate put_query")
+		_db.execute("delete from put_query")
 		while 1:
 			for data in _db.execute("select id,message from put_query"):
 				putf(data[1])
