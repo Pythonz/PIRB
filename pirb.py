@@ -237,6 +237,7 @@ def main():
 						if src.user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
 							put("NOTICE " + nick + " :Reloading ...")
 							c.read("configs/main.conf")
+							__builtin__._botnick = c.get("BOT", "nick")
 							_cache.execute("delete from binds")
 							for loaded in _cache.execute("select name from src"):
 								loaded = loaded[0]
