@@ -1,4 +1,5 @@
 #!/bin/sh
+ver=$(cat version)
 case $1 in
 	start)
 		if [ ! -f pirb.pid ]; then
@@ -8,7 +9,7 @@ case $1 in
 			python pirb.py >> /dev/null &
 			pid=$!
 			echo $pid > pirb.pid
-			echo "PIRB started into background (PID: $pid)"
+			echo "PIRB ($ver) started into background (PID: $pid)"
 		else
 			pid=$(cat pirb.pid)
 			status="false"
@@ -19,7 +20,7 @@ case $1 in
 				rm -f pirb.pid
 				sh pirb start
 			else
-				echo "PIRB is already running"
+				echo "PIRB ($ver) is already running"
 			fi
 		fi
 		;;
@@ -33,9 +34,9 @@ case $1 in
 			if [ -f pirb.pyc ]; then
 				rm -f pirb.pyc
 			fi
-			echo "PIRB is stopped (PID: $pid)"
+			echo "PIRB ($ver) is stopped (PID: $pid)"
 		else
-			echo "PIRB is not running"
+			echo "PIRB ($ver) is not running"
 		fi
 		;;
 	restart)
@@ -83,12 +84,12 @@ case $1 in
 	status)
 		if [ -f pirb.pid ]; then
 			pid=$(cat pirb.pid)
-			status="PIRB seems to be crashed"
+			status="PIRB ($ver) seems to be crashed"
 			for data in $(ps | grep $pid); do
-				status="PIRB is running"
+				status="PIRB ($ver) is running"
 			done
 		else
-			status="PIRB is not running"
+			status="PIRB ($ver) is not running"
 		fi
 		echo $status
 		;;
