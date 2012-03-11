@@ -2,13 +2,14 @@ from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
 
 def load():
 	bind("nick_in_use","raw","433")
-	bind("on_quit","raw","QUIT")
-	bind("whois_330","raw","330")
-	bind("who_354", "raw", "354")
-	bind("check_user","raw","352")
-	bind("on_366","raw","366")
-	bind("on_nickchange","raw","NICK")
-	bind("whois_307","raw","307")
+	if c.getboolean("BOT", "auth-reader"):
+		bind("on_quit","raw","QUIT")
+		bind("whois_330","raw","330")
+		bind("who_354", "raw", "354")
+		bind("check_user","raw","352")
+		bind("on_366","raw","366")
+		bind("on_nickchange","raw","NICK")
+		bind("whois_307","raw","307")
 
 def nick_in_use(text):
 	for data in _cache.execute("select name from botnick"):
