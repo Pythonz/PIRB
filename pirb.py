@@ -129,7 +129,7 @@ def put_query():
 		while 1:
 			for line in data.readlines():
 				putf(line.rstrip())
-				time.sleep(1)
+				time.sleep(c.getint("BOT", "query_time"))
 			time.sleep(1)
 		data.close()
 	except Exception,e: printe(e)
@@ -378,6 +378,7 @@ if __name__ == '__main__':
 				c.set("BOT", "debug", raw_input(cadd+"Debug (True/False): "+cdel))
 				c.set("BOT", "identd", raw_input(cadd+"Identd (None/oidentd): "+cdel))
 				c.set("BOT", "auth-reader", raw_input(cadd+"Auth-Reader (True/False): "+cdel))
+				c.set("BOT", "query_time", raw_input(cadd+"Query_Time (Default: 2): "+cdel))
 				printc("So lets go to the management... The admin settings:")
 				c.set("ADMIN", "password", raw_input(cadd+"Password to use admin commands: "+cdel))
 				c.set("ADMIN", "auth", raw_input(cadd+"Auth (Your Nickserv/Quakenet account): "+cdel))
