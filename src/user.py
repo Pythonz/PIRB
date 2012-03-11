@@ -59,3 +59,5 @@ def getauth(nick):
 	if c.getboolean("BOT", "auth-reader"):
 		for data in _userdb.execute("select auth from auth where nick='%s'" % nick):
 			return data[0]
+	else:
+		return "disabled"
