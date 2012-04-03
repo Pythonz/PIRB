@@ -209,7 +209,7 @@ def main():
 		sys.exit(2)
 	while 1:
 		try:
-			line=s.recv(8096)
+			line=s.recv(512)
 			if not line:
 				disconnect()
 				return 0
