@@ -95,15 +95,12 @@ def keepnick():
 		time.sleep(60)
 		_here = sqlite3.connect("database/cache.db")
 		_here.isolation_level = None
-		printa("keepnick worker connected to the cache database.")
 		for data in _here.execute("select name from botnick"):
 			if _botnick != str(data[0]):
 				_here.execute("update botnick set name='%s'" % _botnick)
 				put("NICK %s" % _botnick)
 		_here.close()
-		printa("keepnick worker has been interrupted ... Starting new thread ...")
 		thread.start_new_thread(keepnick, ())
-		printa("Started keepnick-thread.")
 	except Exception,e: printe(e)
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
