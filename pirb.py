@@ -173,24 +173,24 @@ def main():
 			__builtin__.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 	try:
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		src_counter = 0
 		for source in os.listdir("src"):
-			src_counter = 0
 			if source != "__init__.py" and source.endswith(".py"):
 				exec("import src.%s" % source.split(".py")[0])
 				exec("src.%s.load()" % source.split(".py")[0])
 				_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
 				src_counter += 1
 				printa("src %s loaded" % source.split(".py")[0])
-			printa("Loaded {0} sources.".format(src_counter))
+		printa("Loaded {0} sources.".format(src_counter))
+		mod_counter = 0
 		for mod in os.listdir("modules"):
-			mod_counter = 0
 			if mod != "__init__.py" and mod.endswith(".py"):
 				exec("import modules.%s" % mod.split(".py")[0])
 				exec("modules.%s.load()" % mod.split(".py")[0])
 				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 				mod_counter += 1
 				printa("module %s loaded" % mod.split(".py")[0])
-			printa("Loaded {0} modules.".format(mod_counter))
+		printa("Loaded {0} modules.".format(mod_counter))
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind").split()[_ip], 0))
 			printa("binding to ip '{0}'".format(c.get("SERVER", "bind").split()[_ip]))
