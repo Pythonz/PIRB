@@ -95,12 +95,15 @@ def keepnick():
 		time.sleep(60)
 		_here = sqlite3.connect("database/cache.db")
 		_here.isolation_level = None
+		printa("keepnick worker connected to the cache database.")
 		for data in _here.execute("select name from botnick"):
 			if _botnick != str(data[0]):
 				_here.execute("update botnick set name='%s'" % _botnick)
 				put("NICK %s" % _botnick)
 		_here.close()
+		printa("keepnick worker has been interrupted ... Starting new thread ...")
 		thread.start_new_thread(keepnick, ())
+		printa("Started keepnick-thread.")
 	except Exception,e: printe(e)
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
@@ -125,13 +128,16 @@ def disconnect():
 def put_query():
 	try:
 		open(".put_query", "w").write("")
+		printa("put_query data cleared.")
 		data = open(".put_query", "r")
+		printa("put_query worker started.")
 		while 1:
 			for line in data.readlines():
 				putf(line.rstrip())
 				time.sleep(c.getint("BOT", "query_time"))
 			time.sleep(1)
 		data.close()
+		printa("put_query worker has been interrupted.")
 	except Exception,e: printe(e)
 	except socket.error: pass
 	except KeyboardInterrupt:
@@ -168,17 +174,23 @@ def main():
 	try:
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		for source in os.listdir("src"):
+			src_counter = 0
 			if source != "__init__.py" and source.endswith(".py"):
 				exec("import src.%s" % source.split(".py")[0])
 				exec("src.%s.load()" % source.split(".py")[0])
 				_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
+				src_counter += 1
 				printa("src %s loaded" % source.split(".py")[0])
+			printa("Loaded {0} sources.".format(src_counter))
 		for mod in os.listdir("modules"):
+			mod_counter = 0
 			if mod != "__init__.py" and mod.endswith(".py"):
 				exec("import modules.%s" % mod.split(".py")[0])
 				exec("modules.%s.load()" % mod.split(".py")[0])
 				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
+				mod_counter += 1
 				printa("module %s loaded" % mod.split(".py")[0])
+			printa("Loaded {0} modules.".format(mod_counter))
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind").split()[_ip], 0))
 			printa("binding to ip '{0}'".format(c.get("SERVER", "bind").split()[_ip]))
@@ -197,7 +209,9 @@ def main():
 		putf('NICK '+_botnick)
 		putf('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
 		thread.start_new_thread(keepnick, ())
+		printa("Started keepnick-thread.")
 		thread.start_new_thread(put_query, ())
+		printa("Started put_query-thread.")
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
