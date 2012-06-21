@@ -84,7 +84,7 @@ class Telnet:
 							shell("git commit -m 'Save'")
 							shell("git pull")
 							___cache = os.listdir("database/updates/cache")
-							if __cache < len(___chache):
+							if __cache < len(___cache):
 								while __cache != len(___cache):
 									__cache += 1
 									for sql in ___cache:
