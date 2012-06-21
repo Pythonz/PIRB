@@ -18,12 +18,9 @@ def irc_botmode(text):
 
 def irc_send(target,message):
 	if target.startswith("#"):
-		s.send("PRIVMSG %s :%s\n" % (target,message))
-		printa("PRIVMSG %s :%s" % (target,message))
+		put("PRIVMSG %s :%s" % (target,message))
 	else:
-		s.send("NOTICE %s :%s\n" % (target,message))
-		printa("NOTICE %s :%s" % (target,message))
-	sleep(1)
+		put("NOTICE %s :%s" % (target,message))
 
 def irc_bans(text):
 	chan = text.split()[3]
