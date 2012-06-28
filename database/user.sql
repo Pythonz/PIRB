@@ -1,4 +1,7 @@
 PRAGMA foreign_keys=OFF;
 BEGIN TRANSACTION;
-CREATE TABLE auth(nick text, auth text);
+CREATE TABLE auth(
+	nick text COLLATE NOCASE,
+	auth text COLLATE NOCASE
+);
 COMMIT;
