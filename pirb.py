@@ -254,148 +254,149 @@ def main():
 				return 0
 
 			for line in line.splitlines():
-				reg = line.rstrip()
-				printc(line.rstrip())
+				if len(line.split()) > 1:
+					reg = line.rstrip()
+					printc(line.rstrip())
 
-				if line.split()[1] == "001":
-					if c.get("BOT", "identd") == "oidentd":
-						file = open(identfile, "w")
-						file.write(content)
-						file.close()
+					if line.split()[1] == "001":
+						if c.get("BOT", "identd") == "oidentd":
+							file = open(identfile, "w")
+							file.write(content)
+							file.close()
 
-				if line.split()[1] == ":Closing":
-					disconnect()
-					return 0
+					if line.split()[1] == ":Closing":
+						disconnect()
+						return 0
 
-				if line.split()[0]=='PING':
-					putf('PONG '+line[5:])
+					if line.split()[0]=='PING':
+						putf('PONG '+line[5:])
 
-				line = line.rstrip()[1:]
+					line = line.rstrip()[1:]
 
-				if line.split()[1].lower() == "privmsg":
-					nick = line.split("!")[0]
-					uhost = line.split("!")[1].split()[0]
-					target = line.split()[2]
-					arg = ' '.join(line.split()[3:])[0:][1:]
-					cmd = line.split()[3][1:]
+					if line.split()[1].lower() == "privmsg":
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						target = line.split()[2]
+						arg = ' '.join(line.split()[3:])[0:][1:]
+						cmd = line.split()[3][1:]
 
-					if arg.split()[0].lower() == "reload" and line.split()[2][0] != "#":
-						if src.user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
-							put("NOTICE " + nick + " :Reloading ...")
-							c.read("configs/main.conf")
-							__builtin__._botnick = c.get("BOT", "nick")
-							_cache.execute("delete from binds")
+						if arg.split()[0].lower() == "reload" and line.split()[2][0] != "#":
+							if src.user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
+								put("NOTICE " + nick + " :Reloading ...")
+								c.read("configs/main.conf")
+								__builtin__._botnick = c.get("BOT", "nick")
+								_cache.execute("delete from binds")
 
-							for loaded in _cache.execute("select name from src"):
-								loaded = loaded[0]
+								for loaded in _cache.execute("select name from src"):
+									loaded = loaded[0]
 
-								if not os.access("src/%s.py" % loaded, os.F_OK):
-									exec("del src.%s" % loaded)
-									exec("""del sys.modules["src.%s"]""" % loaded)
-									_cache.execute("delete from src where name='%s'" % loaded)
-									printa("src %s unloaded" % loaded)
+									if not os.access("src/%s.py" % loaded, os.F_OK):
+										exec("del src.%s" % loaded)
+										exec("""del sys.modules["src.%s"]""" % loaded)
+										_cache.execute("delete from src where name='%s'" % loaded)
+										printa("src %s unloaded" % loaded)
 
-							for source in os.listdir("src"):
-								if source != "__init__.py" and source.endswith(".py"):
-									name = source.split(".py")[0]
-									entry = False
+								for source in os.listdir("src"):
+									if source != "__init__.py" and source.endswith(".py"):
+										name = source.split(".py")[0]
+										entry = False
 
-									for loaded in _cache.execute("select name from src where name='%s'" % name):
-										entry = True
+										for loaded in _cache.execute("select name from src where name='%s'" % name):
+											entry = True
 
-									if entry is False:
-										exec("import src.%s" % name)
-										exec("src.%s.load()" % name)
-										_cache.execute("insert into src values ('%s')" % name)
-										printa("src %s loaded" % name)
-									else:
-										exec("reload(src.%s)" % name)
-										exec("src.%s.load()" % name)
-										printa("src %s reloaded" % name)
+										if entry is False:
+											exec("import src.%s" % name)
+											exec("src.%s.load()" % name)
+											_cache.execute("insert into src values ('%s')" % name)
+											printa("src %s loaded" % name)
+										else:
+											exec("reload(src.%s)" % name)
+											exec("src.%s.load()" % name)
+											printa("src %s reloaded" % name)
 
-							for loaded in _cache.execute("select name from modules"):
-								loaded = loaded[0]
+								for loaded in _cache.execute("select name from modules"):
+									loaded = loaded[0]
 
-								if not os.access("modules/%s.py" % loaded, os.F_OK):
-									exec("del modules.%s" % loaded)
-									exec("""del sys.modules["modules.%s"]""" % loaded)
-									_cache.execute("delete from modules where name='%s'" % loaded)
-									printa("module %s unloaded" % loaded)
+									if not os.access("modules/%s.py" % loaded, os.F_OK):
+										exec("del modules.%s" % loaded)
+										exec("""del sys.modules["modules.%s"]""" % loaded)
+										_cache.execute("delete from modules where name='%s'" % loaded)
+										printa("module %s unloaded" % loaded)
 
-							for source in os.listdir("modules"):
-								if source != "__init__.py" and source.endswith(".py"):
-									name = source.split(".py")[0]
-									entry = False
+								for source in os.listdir("modules"):
+									if source != "__init__.py" and source.endswith(".py"):
+										name = source.split(".py")[0]
+										entry = False
 
-									for loaded in _cache.execute("select name from modules where name='%s'" % name):
-										entry = True
+										for loaded in _cache.execute("select name from modules where name='%s'" % name):
+											entry = True
 
-									if entry is False:
-										exec("import modules.%s" % name)
-										exec("modules.%s.load()" % name)
-										_cache.execute("insert into modules values ('%s')" % name)
-										printa("module %s loaded" % name)
-									else:
-										exec("reload(modules.%s)" % name)
-										exec("modules.%s.load()" % name)
-										printa("module %s reloaded" % name)
+										if entry is False:
+											exec("import modules.%s" % name)
+											exec("modules.%s.load()" % name)
+											_cache.execute("insert into modules values ('%s')" % name)
+											printa("module %s loaded" % name)
+										else:
+											exec("reload(modules.%s)" % name)
+											exec("modules.%s.load()" % name)
+											printa("module %s reloaded" % name)
 
-							put("NOTICE " + nick + " :Done.")
+								put("NOTICE " + nick + " :Done.")
 
-					if arg.split()[0].lower() == "restart" and line.split()[2][0] != "#":
-						if src.user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
-							putf("QUIT :Restart ... I\'ll be back in %s seconds!" % c.get("SERVER", "reconnect"))
-							disconnect()
-							return 0
+						if arg.split()[0].lower() == "restart" and line.split()[2][0] != "#":
+							if src.user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
+								putf("QUIT :Restart ... I\'ll be back in %s seconds!" % c.get("SERVER", "reconnect"))
+								disconnect()
+								return 0
 
-					if target.startswith("#"):
-						for hookconfig in _cache.execute("select name,module,command from binds where event == 'pub'"):
-							hook = str(hookconfig[0])
-							module = str(hookconfig[1])
-							command = str(hookconfig[2])
+						if target.startswith("#"):
+							for hookconfig in _cache.execute("select name,module,command from binds where event == 'pub'"):
+								hook = str(hookconfig[0])
+								module = str(hookconfig[1])
+								command = str(hookconfig[2])
 
- 							if command != "" and cmd.lower() == command.lower():
-								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
-							elif command == "":
-								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
-					else:
-						for hookconfig in _cache.execute("select name,module,command from binds where event == 'msg'"):
+	 							if command != "" and cmd.lower() == command.lower():
+									exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
+								elif command == "":
+									exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
+						else:
+							for hookconfig in _cache.execute("select name,module,command from binds where event == 'msg'"):
+								hook = str(hookconfig[0])
+								module = str(hookconfig[1])
+								command = str(hookconfig[2])
+
+								if command != "" and cmd.lower() == command.lower():
+									exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, ' '.join(arg.split()[1:])))
+								elif command == "":
+									exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, arg))
+
+					elif line.split()[1].lower() == "notice" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						target = line.split()[2]
+						arg = ' '.join(line.split()[3:])[0:][1:]
+						cmd = line.split()[3][1:]
+
+						for hookconfig in _cache.execute("select name,module,command from binds where event == 'not'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
 							command = str(hookconfig[2])
 
 							if command != "" and cmd.lower() == command.lower():
-								exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, ' '.join(arg.split()[1:])))
+								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
 							elif command == "":
-								exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, arg))
+								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
 
-				elif line.split()[1].lower() == "notice" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
-					nick = line.split("!")[0]
-					uhost = line.split("!")[1].split()[0]
-					target = line.split()[2]
-					arg = ' '.join(line.split()[3:])[0:][1:]
-					cmd = line.split()[3][1:]
-
-					for hookconfig in _cache.execute("select name,module,command from binds where event == 'not'"):
+					for hookconfig in _cache.execute("select name,module,command from binds where event == 'raw'"):
 						hook = str(hookconfig[0])
 						module = str(hookconfig[1])
 						command = str(hookconfig[2])
+						cmdo = line.split()[1]
 
-						if command != "" and cmd.lower() == command.lower():
-							exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
+						if command != "" and cmdo.lower() == command.lower():
+							exec("""%s.%s("%s")""" % (module, hook, reg))
 						elif command == "":
-							exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
-
-				for hookconfig in _cache.execute("select name,module,command from binds where event == 'raw'"):
-					hook = str(hookconfig[0])
-					module = str(hookconfig[1])
-					command = str(hookconfig[2])
-					cmdo = line.split()[1]
-
-					if command != "" and cmdo.lower() == command.lower():
-						exec("""%s.%s("%s")""" % (module, hook, reg))
-					elif command == "":
-						exec("""%s.%s("%s")""" % (module, hook, reg))
+							exec("""%s.%s("%s")""" % (module, hook, reg))
 		except Exception:
 			et, ev, tb = sys.exc_info()
 			e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
