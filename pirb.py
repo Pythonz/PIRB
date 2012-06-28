@@ -364,7 +364,7 @@ def main():
 						module = str(hookconfig[1])
 						command = str(hookconfig[2])
 
-						if event == "msg" and not target.startswith("#"):
+						if target.startswith("#"):
 							if command != "" and cmd.lower() == command.lower():
 								exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, ' '.join(arg.split()[1:])))
 							elif command == "":
