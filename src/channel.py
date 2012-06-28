@@ -126,7 +126,7 @@ def ban(nick,host,chan,arg):
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) > 0:
 			target = arg.split()[0][1:]
-			scut = arg.split()[0][1]
+			scut = arg.split()[0][0]
 
 			if wmatch(target, "*!*@*"):
 				if scut == "+":
@@ -170,7 +170,7 @@ def exempt(nick,host,chan,arg):
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) > 0:
 			target = arg.split()[0][1:]
-			scut = arg.split()[0][1]
+			scut = arg.split()[0][0]
 
 			if wmatch(target, "*!*@*"):
 				if scut == "+":
