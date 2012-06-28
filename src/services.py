@@ -2,7 +2,7 @@ from pirb import put,bind,c,putf
 
 def load():
 	bind("nick_identify","not")
-	bind("quakenet_auth","raw","005")
+	bind("quakenet_auth","raw","001")
 	bind("quakenet_mode_x","not","You")
 
 def nick_identify(nick, uhost, target, arg):

@@ -11,10 +11,10 @@ database/updates/chan/empty d41d8cd98f00b204e9800998ecf8427e
 database/updates/user/empty d41d8cd98f00b204e9800998ecf8427e
 modules/__init__.py d41d8cd98f00b204e9800998ecf8427e
 src/__init__.py d41d8cd98f00b204e9800998ecf8427e
-src/channel.py d6ef2ef04513c0975851bb5ee0502c03
+src/channel.py 1e54e1745ef5dc5f272fed8ed6d2a6d5
 src/ctcp.py fe21d2178e05c847ea52ae54c52a86e6
 src/irc.py 0e4cf16f5e7be438f7e5dcdb884e05ed
-src/services.py 00cf8486868bd2c9e41c1e926c93346e
+src/services.py 6a4bc1605b1ea3f8d81645a55a0c892f
 src/system.py 95c59a686a644b576747990125437798
 src/telnet.py 2351968a783ba43958e1ac6f39700df2
 src/user.py 184094b35d4a0e7e12cdd3e0d0003f16

@@ -4,7 +4,7 @@ from fnmatch import fnmatch as wmatch
 from src.irc import irc_send
 
 def load():
-	bind("channel_join","raw","376")
+	bind("channel_join","raw","001")
 	bind("channel_kick","raw","KICK")
 	bind("channel_register","msg","register")
 	bind("channel_drop","msg","drop")
