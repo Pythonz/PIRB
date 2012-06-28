@@ -245,7 +245,7 @@ def main():
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
 
-	while 1:
+	while True:
 		try:
 			line=s.recv(102400)
 
