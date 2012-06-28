@@ -118,7 +118,6 @@ def devoice(nick,host,chan,arg):
 			putf("MODE %s -v %s" % (chan,nick))
 
 def ban(nick,host,chan,arg):
-	target = arg.split()[0][1:]
 	auth = getauth(nick)
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
@@ -126,10 +125,11 @@ def ban(nick,host,chan,arg):
 
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) > 0:
-			scut = arg.split()[0]
+			target = arg.split()[0][1:]
+			scut = arg.split()[0][1]
 
 			if wmatch(target, "*!*@*"):
-				if scut.startswith("+"):
+				if scut == "+":
 					entry = False
 
 					for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
@@ -141,7 +141,7 @@ def ban(nick,host,chan,arg):
 						whochan(chan)
 					else:
 						put("NOTICE %s :[%s] %s is already on the banlist" % (nick,chan,target))
-				elif scut.startswith("-"):
+				elif scut == "-":
 					entry = False
 
 					for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
@@ -162,7 +162,6 @@ def ban(nick,host,chan,arg):
 				irc_send(nick,"[%s] %s" % (chan,str(data[0])))
 
 def exempt(nick,host,chan,arg):
-	target = arg.split()[0][1:]
 	auth = getauth(nick)
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
@@ -170,10 +169,11 @@ def exempt(nick,host,chan,arg):
 
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) > 0:
-			scut = arg.split()[0]
+			target = arg.split()[0][1:]
+			scut = arg.split()[0][1]
 
 			if wmatch(target, "*!*@*"):
-				if scut.startswith("+"):
+				if scut == "+":
 					entry = False
 
 					for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
@@ -185,7 +185,7 @@ def exempt(nick,host,chan,arg):
 						whochan(chan)
 					else:
 						put("NOTICE %s :[%s] %s is already on the exemptlist" % (nick,chan,target))
-				elif scut.startswith("-"):
+				elif scut == "-":
 					entry = False
 
 					for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
