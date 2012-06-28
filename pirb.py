@@ -348,23 +348,22 @@ def main():
 							disconnect()
 							return 0
 
-					for hookconfig in _cache.execute("select name,module,command from binds where event == 'pub'"):
-						hook = str(hookconfig[0])
-						module = str(hookconfig[1])
-						command = str(hookconfig[2])
+					if target.startswith("#"):
+						for hookconfig in _cache.execute("select * from binds where event == 'pub'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							command = str(hookconfig[3])
 
-						if target.startswith("#"):
  							if command != "" and cmd.lower() == command.lower():
 								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
 							elif command == "":
 								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
+					else:
+						for hookconfig in _cache.execute("select * from binds where event == 'msg'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							command = str(hookconfig[3])
 
-					for hookconfig in _cache.execute("select name,module,command from binds where event == 'msg'"):
-						hook = str(hookconfig[0])
-						module = str(hookconfig[1])
-						command = str(hookconfig[2])
-
-						if target.startswith("#"):
 							if command != "" and cmd.lower() == command.lower():
 								exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, ' '.join(arg.split()[1:])))
 							elif command == "":
@@ -377,20 +376,20 @@ def main():
 					arg = ' '.join(line.split()[3:])[0:][1:]
 					cmd = line.split()[3][1:]
 
-					for hookconfig in _cache.execute("select name,module,command from binds where event == 'not'"):
+					for hookconfig in _cache.execute("select * from binds where event == 'not'"):
 						hook = str(hookconfig[0])
 						module = str(hookconfig[1])
-						command = str(hookconfig[2])
+						command = str(hookconfig[3])
 
 						if command != "" and cmd.lower() == command.lower():
 							exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
 						elif command == "":
 							exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
 
-				for hookconfig in _cache.execute("select name,module,command from binds where event == 'raw'"):
+				for hookconfig in _cache.execute("select * from binds where event == 'raw'"):
 					hook = str(hookconfig[0])
 					module = str(hookconfig[1])
-					command = str(hookconfig[2])
+					command = str(hookconfig[3])
 					cmdo = line.split()[1]
 
 					if command != "" and cmdo.lower() == command.lower():
