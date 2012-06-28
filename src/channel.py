@@ -126,31 +126,34 @@ def ban(nick,host,chan,arg):
 	hostflag = gethostflag(chan,hostmask)
 
 	if flag == "n" or flag == "o" or hostflag == "o":
-		if wmatch(target, "*!*@*"):
-			if scut.startswith("+"):
-				entry = False
+		if len(arg.split()) > 0:
+			if wmatch(target, "*!*@*"):
+				if scut.startswith("+"):
+					entry = False
 
-				for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
-					entry = True
+					for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
+						entry = True
 
-				if entry is False:
-					_chandb.execute("insert into bans values ('%s','%s')" % (chan,target))
-					put("NOTICE %s :[%s] %s has been added to the banlist" % (nick,chan,target))
-					whochan(chan)
+					if entry is False:
+						_chandb.execute("insert into bans values ('%s','%s')" % (chan,target))
+						put("NOTICE %s :[%s] %s has been added to the banlist" % (nick,chan,target))
+						whochan(chan)
+					else:
+						put("NOTICE %s :[%s] %s is already on the banlist" % (nick,chan,target))
+				elif scut.startswith("-"):
+					entry = False
+
+					for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
+						entry = True
+
+					if entry is True:
+						_chandb.execute("delete from bans where channel='%s' and ban='%s'" % (chan,target))
+						put("NOTICE %s :[%s] %s has been removed from the banlist" % (nick,chan,target))
+						put("MODE %s -b %s" % (chan,target))
+					else:
+						put("NOTICE %s :[%s] %s is not on the banlist" % (nick,chan,target))
 				else:
-					put("NOTICE %s :[%s] %s is already on the banlist" % (nick,chan,target))
-			elif scut.startswith("-"):
-				entry = False
-
-				for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
-					entry = True
-
-				if entry is True:
-					_chandb.execute("delete from bans where channel='%s' and ban='%s'" % (chan,target))
-					put("NOTICE %s :[%s] %s has been removed from the banlist" % (nick,chan,target))
-					put("MODE %s -b %s" % (chan,target))
-				else:
-					put("NOTICE %s :[%s] %s is not on the banlist" % (nick,chan,target))
+					irc_send(nick, "$ban +/-*!*example@*.example.com")
 			else:
 				irc_send(nick,"$ban +/-*!*example@*.example.com")
 		else:
@@ -166,31 +169,34 @@ def exempt(nick,host,chan,arg):
 	hostflag = gethostflag(chan,hostmask)
 
 	if flag == "n" or flag == "o" or hostflag == "o":
-		if wmatch(target, "*!*@*"):
-			if scut.startswith("+"):
-				entry = False
+		if len(arg.split()) > 0:
+			if wmatch(target, "*!*@*"):
+				if scut.startswith("+"):
+					entry = False
 
-				for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
-					entry = True
+					for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
+						entry = True
 
-				if entry is False:
-					_chandb.execute("insert into exempts values ('%s','%s')" % (chan,target))
-					put("NOTICE %s :[%s] %s has been added to the exemptlist" % (nick,chan,target))
-					whochan(chan)
+					if entry is False:
+						_chandb.execute("insert into exempts values ('%s','%s')" % (chan,target))
+						put("NOTICE %s :[%s] %s has been added to the exemptlist" % (nick,chan,target))
+						whochan(chan)
+					else:
+						put("NOTICE %s :[%s] %s is already on the exemptlist" % (nick,chan,target))
+				elif scut.startswith("-"):
+					entry = False
+
+					for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
+						entry = True
+
+					if entry is True:
+						_chandb.execute("delete from exempts where channel='%s' and exempt='%s'" % (chan,target))
+						put("NOTICE %s :[%s] %s has been removed from the exemptlist" % (nick,chan,target))
+						put("MODE %s -b %s" % (chan,target))
+					else:
+						put("NOTICE %s :[%s] %s is not on the exemptlist" % (nick,chan,target))
 				else:
-					put("NOTICE %s :[%s] %s is already on the exemptlist" % (nick,chan,target))
-			elif scut.startswith("-"):
-				entry = False
-
-				for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
-					entry = True
-
-				if entry is True:
-					_chandb.execute("delete from exempts where channel='%s' and exempt='%s'" % (chan,target))
-					put("NOTICE %s :[%s] %s has been removed from the exemptlist" % (nick,chan,target))
-					put("MODE %s -b %s" % (chan,target))
-				else:
-					put("NOTICE %s :[%s] %s is not on the exemptlist" % (nick,chan,target))
+					irc_send(nick,"$exempt +/-*!*example@*.example.com")
 			else:
 				irc_send(nick,"$exempt +/-*!*example@*.example.com")
 		else:
