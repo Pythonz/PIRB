@@ -474,8 +474,13 @@ if __name__ == '__main__':
 								while not value.isdigit():
 									value = raw_input(text)
 							elif option[2] == "bool":
-								while value.lower() != "y" and value.lower() != "n":
-									value = raw_input(text)
+								while value != "True" and value != "False":
+									if value.lower() == "y":
+										value = "True"
+									elif value.lower() == "n":
+										value = "False"
+									else:
+										value = raw_input(text)
 						elif len(option) == 5:
 							if option[2] == "int":
 								text += " (Enter a valid number)"
