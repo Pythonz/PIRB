@@ -119,7 +119,6 @@ def devoice(nick,host,chan,arg):
 
 def ban(nick,host,chan,arg):
 	target = arg.split()[0][1:]
-	scut = arg.split()[0]
 	auth = getauth(nick)
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
@@ -127,6 +126,8 @@ def ban(nick,host,chan,arg):
 
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) > 0:
+			scut = arg.split()[0]
+
 			if wmatch(target, "*!*@*"):
 				if scut.startswith("+"):
 					entry = False
@@ -162,7 +163,6 @@ def ban(nick,host,chan,arg):
 
 def exempt(nick,host,chan,arg):
 	target = arg.split()[0][1:]
-	scut = arg.split()[0]
 	auth = getauth(nick)
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
@@ -170,6 +170,8 @@ def exempt(nick,host,chan,arg):
 
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) > 0:
+			scut = arg.split()[0]
+
 			if wmatch(target, "*!*@*"):
 				if scut.startswith("+"):
 					entry = False

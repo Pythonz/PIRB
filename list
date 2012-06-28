@@ -11,7 +11,7 @@ database/updates/chan/empty d41d8cd98f00b204e9800998ecf8427e
 database/updates/user/empty d41d8cd98f00b204e9800998ecf8427e
 modules/__init__.py d41d8cd98f00b204e9800998ecf8427e
 src/__init__.py d41d8cd98f00b204e9800998ecf8427e
-src/channel.py c13c6666d8671041a71b370a1251176f
+src/channel.py 9664d56ce230103c096e3ddf7cc7ea88
 src/ctcp.py fe21d2178e05c847ea52ae54c52a86e6
 src/irc.py 0e4cf16f5e7be438f7e5dcdb884e05ed
 src/services.py 6a4bc1605b1ea3f8d81645a55a0c892f
