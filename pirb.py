@@ -421,51 +421,105 @@ if __name__ == '__main__':
 				print("Databases created")
 
 			elif sys.argv[1].lower() == "configure":
-				cadd = "\033[1m\033[34m"
-				cdel = "\033[0m"
 				c = ConfigParser.RawConfigParser()
-				printc("Welcome to the Configuring interface! Let's make it easy to use this bot.")
-				printc("Loading configuration options into cache :)")
-				c.add_section("SERVER")
-				c.add_section("BOT")
-				c.add_section("ADMIN")
-				c.add_section("SERVICES")
-				c.add_section("TELNET")
-				printc("So lets configure the server settings first:")
-				c.set("SERVER", "address", raw_input(cadd+"Address: "+cdel))
-				c.set("SERVER", "port", raw_input(cadd+"Port: "+cdel))
-				c.set("SERVER", "reconnect", raw_input(cadd+"Time to wait before reconnect: "+cdel))
-				c.set("SERVER", "bind", raw_input(cadd+"IP to bind to (leave it blank when you don't need it): "+cdel))
-				c.set("SERVER", "ipv6", raw_input(cadd+"IPv6 (True/False): "+cdel))
-				c.set("SERVER", "ssl", raw_input(cadd+"SSL (True/False): "+cdel))
-				printc("So now the server settings are ready. Lets go to bot settings:")
-				c.set("BOT", "nick", raw_input(cadd+"Nick: "+cdel))
-				c.set("BOT", "username", raw_input(cadd+"Username (ident): "+cdel))
-				c.set("BOT", "realname", raw_input(cadd+"Realname: "+cdel))
-				c.set("BOT", "channels", raw_input(cadd+"Channels to join on startup (seperate with ,): "+cdel))
-				c.set("BOT", "debug", raw_input(cadd+"Debug (True/False): "+cdel))
-				c.set("BOT", "identd", raw_input(cadd+"Identd (None/oidentd): "+cdel))
-				c.set("BOT", "auth-reader", raw_input(cadd+"Auth-Reader (True/False): "+cdel))
-				c.set("BOT", "query_time", raw_input(cadd+"Query_Time (Default: 2): "+cdel))
-				printc("So lets go to the management... The admin settings:")
-				c.set("ADMIN", "password", raw_input(cadd+"Password to use admin commands: "+cdel))
-				c.set("ADMIN", "auth", raw_input(cadd+"Auth (Your Nickserv/Quakenet account): "+cdel))
-				printc("So now we need just two more. The services settings:")
-				c.set("SERVICES", "nickserv", raw_input(cadd+"NickServ password: "+cdel))
-				c.set("SERVICES", "quakenet", raw_input(cadd+"QuakeNet Auth (format: authname password): "+cdel))
-				printc("At least, we have to configure the telnet connection for management:")
-				c.set("TELNET", "ip", raw_input(cadd+"IP to bind (0.0.0.0 to bind to all ips): "+cdel))
-				c.set("TELNET", "port", raw_input(cadd+"Port to bind: "+cdel))
-				printc("That was all :)")
-				printc("Writing config now...")
+				print("Welcome to the Configuring interface! Let's make it easy to use this bot.")
+				print("Loading configuration options into cache :)")
+				sections = ['SERVER', 'BOT', 'ADMIN', 'SERVICES', 'TELNET']
+
+				for section in sections:
+					c.add_section(section)
+
+				options = list()
+				options.append(['SERVER', 'address', 'str', 'Server address'])
+				options.append(['SERVER', 'port', 'int', 'Server port', '6667'])
+				options.append(['SERVER', 'reconnect', 'int', 'Time between reconnects', '30'])
+				options.append(['SERVER', 'bind', 'str', 'IP to bind to', ''])
+				options.append(['SERVER', 'ipv6', 'bool', '', 'N'])
+				options.append(['SERVER', 'ssl', 'bool', '', 'N'])
+				options.append(['BOT', 'nick', 'str', ''])
+				options.append(['BOT', 'username', 'str', ''])
+				options.append(['BOT', 'realname', 'str', ''])
+				options.append(['BOT', 'channels', 'str', 'Channels to join on startup seperated with ,'])
+				options.append(['BOT', 'debug', 'bool', ''])
+				options.append(['BOT', 'identd', 'str', 'Running an IdentD? You can choose between None and oidentd.', 'None'])
+				options.append(['BOT', 'auth-reader', 'bool', '', 'Y'])
+				options.append(['BOT', 'query_time', 'int', 'Put-Query interval', '2'])
+				options.append(['ADMIN', 'password', 'str', 'needed for admin commands'])
+				options.append(['ADMIN', 'auth', 'str', 'can replace password at some commands', ''])
+				options.append(['SERVICES', 'nickserv', 'str', 'Nickserv password if necessary', ''])
+				options.append(['SERVICES', 'quakenet', 'str', 'QuakeNet auth if necessary (format: acc pw)', ''])
+				options.append(['TELNET', 'ip', 'str', '', '127.0.0.1'])
+				options.append(['TELNET', 'port', 'int', '', '8898'])
+
+				for option in options:
+					if c.has_section(option[0]):
+						value = ""
+						text = option[1].capitalize()
+
+						if len(option) == 4:
+							if option[2] == "int":
+								text += " (Enter a valid number)"
+							elif option[2] == "bool":
+								text += " (Y/N)"
+
+							if option[3] != "":
+								text += " (" + option[3] + ")"
+
+							text += ": "
+
+							while value == "":
+								value = raw_input(text)
+
+							if option[2] == "int":
+								while not value.isdigit():
+									value = raw_input(text)
+							elif option[2] == "bool":
+								while value.lower() != "y" and value.lower() != "n":
+									value = raw_input(text)
+						elif len(option) == 5:
+							if option[2] == "int":
+								text += " (Enter a valid number)"
+							elif option[2] == "bool":
+								text += " (Y/N)"
+
+							if option[3] != "":
+								text += " (" + option[3] + ")"
+
+							text += " (Default: " + option[4] + "): "
+							value = raw_input(text)
+
+							if value == "":
+								value = option[4]
+								
+								if option[2] == "bool":
+									if value == "Y":
+										value = "True"
+									elif value == "N":
+										value = "False"
+							elif option[2] == "int":
+								while not value.isdigit():
+									value = raw_input(text)
+							elif option[2] == "bool":
+								while value != "True" and value != "False":
+									if value.lower() == "y":
+										value = "True"
+									elif value.lower() == "n":
+										value = "False"
+									else:
+										value = raw_input(text)
+
+						c.set(option[0], option[1], value)
+
+				print("Writing config now...")
+
 				with open("configs/main.conf", "wb") as configfile:
 					c.write(configfile)
-				printc("Config file written :)")
-				printc("Run '%s' to start me :D" % sys.argv[0])
 
+				print("Config file written :)")
+				print("Run '%s' to start me :D" % sys.argv[0])
 			elif sys.argv[1].lower() == "-h" or sys.argv[1].lower() == "--help":
-				printa(sys.argv[0]+" database		creates new databases")
-				printa(sys.argv[0]+" configure		config maker")
+				print(sys.argv[0]+" database		creates new databases")
+				print(sys.argv[0]+" configure		config maker")
 		else:
 			main()
 	except Exception:
