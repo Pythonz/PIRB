@@ -230,10 +230,6 @@ def main():
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		putf('NICK '+_botnick)
 		putf('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
-		thread.start_new_thread(keepnick, ())
-		printa("Started keepnick-thread.")
-		thread.start_new_thread(put_query, ())
-		printa("Started put_query-thread.")
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
@@ -526,6 +522,10 @@ if __name__ == '__main__':
 				print(sys.argv[0]+" database		creates new databases")
 				print(sys.argv[0]+" configure		config maker")
 		else:
+			thread.start_new_thread(put_query, ())
+			printa("Started put_query-thread.")
+			thread.start_new_thread(keepnick, ())
+			printa("Started keepnick-thread.")
 			main()
 	except Exception:
 		et, ev, tb = sys.exc_info()
