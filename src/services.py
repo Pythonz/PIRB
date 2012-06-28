@@ -10,7 +10,7 @@ def nick_identify(nick, uhost, target, arg):
 		if arg.lower().find("wenn du ihn nicht innerhalb einer minute identifizierst") != -1:
 			ns_pw = c.get("SERVICES", "nickserv")
 			putf("PRIVMSG NickServ :IDENTIFY %s" % ns_pw)
-		if arg.lower().find("nickname is registered") != -1:
+		elif arg.lower().find("nickname is registered") != -1:
 			ns_pw = c.get("SERVICES", "nickserv")
 			putf("PRIVMSG NickServ :IDENTIFY %s" % ns_pw)
 
@@ -19,6 +19,7 @@ def quakenet_auth(text):
 		putf("AUTH %s" % c.get("SERVICES", "quakenet"))
 
 def quakenet_mode_x(nick,host,target,arg):
-        react = "are now logged in as "+c.get("SERVICES","quakenet").split()[0]+"."
-        if arg == react:
-                putf("MODE %s +x" % target)
+	react = "are now logged in as "+c.get("SERVICES","quakenet").split()[0]+"."
+
+	if arg == react:
+		putf("MODE %s +x" % target)

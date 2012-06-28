@@ -25,15 +25,19 @@ def irc_send(target,message):
 def irc_bans(text):
 	chan = text.split()[3]
 	host = text.split()[7]+"!"+text.split()[4]+"@"+text.split()[5]
+
 	for data in _chandb.execute("select ban from bans where channel='%s'" % chan):
 		if wmatch(host.lower(), str(data[0]).lower()):
 			entry = False
+
 			for data1 in _chandb.execute("select exempt from exempts where channel='%s'" % chan):
 				if wmatch(host.lower(), str(data1[0]).lower()):
 					entry = True
+
 				for botnick in _cache.execute("select name from botnick"):
 					if str(text.split()[7]).lower() == str(text.split()[2]).lower():
 						entry = True
+
 			if entry == False:
 				put("MODE %s +b %s" % (chan,data[0]))
 				put("KICK %s %s :Banned." % (chan,text.split()[7]))

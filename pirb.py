@@ -24,15 +24,15 @@ sys.path.append("src")
 
 def printa(text):
 	if text:
-		print "\033[1m\033[34m[" + time.strftime("%H:%M", time.localtime()) + "] " + str(text) + "\033[0m"
+		print("[" + time.strftime("%H:%M", time.localtime()) + "] \033[1m\033[34m*\033[0m " + str(text))
 
 def printc(text):
 	if text:
-		print "\033[1m\033[32m[" + time.strftime("%H:%M", time.localtime()) + "] " + str(text) + "\033[0m"
+		print("[" + time.strftime("%H:%M", time.localtime()) + "] \033[1m\033[32m*\033[0m " + str(text))
 
 def printe(text):
 	if c.getboolean("BOT", "debug"):
-		print "\033[1m\033[31m[" + time.strftime("%H:%M", time.localtime()) + "] " + str(text) + "\033[0m"
+		print("[" + time.strftime("%H:%M", time.localtime()) + "] \033[1m\033[31m*\033[0m " + str(text))
 
 c = ConfigParser.RawConfigParser()
 c.read("configs/main.conf")
@@ -67,15 +67,20 @@ def bind(function,event,command=""):
 def put(arg):
 	try:
 		open(".put_query", "a").write(arg+"\n")
-	except Exception,e: printe(e)
-	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
+	except Exception,e:
+		printe(e)
+	except KeyboardInterrupt:
+		printe("\nAborting ... CTRL + C")
 
 def putf(arg):
 	try:
 		s.send(arg.rstrip()+"\n")
 		printa(arg.rstrip())
-	except Exception,e: printe(e)
-	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
+	except Exception,e:
+		printe(e)
+	except KeyboardInterrupt:
+		printe("\nAborting ... CTRL + C")
+
 
 def whois(nick):
 	if c.get("SERVER", "address").lower().endswith(".quakenet.org"):
@@ -95,13 +100,16 @@ def keepnick():
 		time.sleep(60)
 		_here = sqlite3.connect("database/cache.db")
 		_here.isolation_level = None
+
 		for data in _here.execute("select name from botnick"):
 			if _botnick != str(data[0]):
 				_here.execute("update botnick set name='%s'" % _botnick)
 				put("NICK %s" % _botnick)
+
 		_here.close()
 		thread.start_new_thread(keepnick, ())
-	except Exception,e: printe(e)
+	except Exception,e:
+		printe(e)
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
@@ -116,8 +124,10 @@ def disconnect():
 		printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
 		time.sleep(int(c.get("SERVER", "reconnect")))
 		main()
-	except Exception,e: printe(e)
-	except socket.error: pass
+	except Exception,e:
+		printe(e)
+	except socket.error:
+		pass
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
@@ -128,15 +138,20 @@ def put_query():
 		printa("put_query data cleared.")
 		data = open(".put_query", "r")
 		printa("put_query worker started.")
+
 		while 1:
 			for line in data.readlines():
 				putf(line.rstrip())
 				time.sleep(c.getint("BOT", "query_time"))
+
 			time.sleep(1)
+
 		data.close()
 		printa("put_query worker has been interrupted.")
-	except Exception,e: printe(e)
-	except socket.error: pass
+	except Exception,e:
+		printe(e)
+	except socket.error:
+		pass
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
@@ -158,6 +173,7 @@ def main():
 	_userdb.execute("delete from auth")
 	__builtin__._chandb = sqlite3.connect("database/chan.db")
 	_chandb.isolation_level = None
+
 	if c.getboolean("SERVER", "ipv6") and socket.has_ipv6:
 		if c.getboolean("SERVER", "ssl"):
 			__builtin__.s = ssl.wrap_socket(socket.socket(socket.AF_INET6, socket.SOCK_STREAM))
@@ -168,9 +184,11 @@ def main():
 			__builtin__.s = ssl.wrap_socket(socket.socket(socket.AF_INET, socket.SOCK_STREAM))
 		else:
 			__builtin__.s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
 	try:
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 		src_counter = 0
+
 		for source in os.listdir("src"):
 			if source != "__init__.py" and source.endswith(".py"):
 				exec("import src.%s" % source.split(".py")[0])
@@ -178,8 +196,10 @@ def main():
 				_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
 				src_counter += 1
 				printa("src %s loaded" % source.split(".py")[0])
+
 		printa("Loaded {0} sources.".format(src_counter))
 		mod_counter = 0
+
 		for mod in os.listdir("modules"):
 			if mod != "__init__.py" and mod.endswith(".py"):
 				exec("import modules.%s" % mod.split(".py")[0])
@@ -187,13 +207,17 @@ def main():
 				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
 				mod_counter += 1
 				printa("module %s loaded" % mod.split(".py")[0])
+
 		printa("Loaded {0} modules.".format(mod_counter))
+
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind").split()[_ip], 0))
 			printa("binding to ip '{0}'".format(c.get("SERVER", "bind").split()[_ip]))
 			_ip += 1
+
 			if len(c.get("SERVER", "bind").split()) == _ip:
 				_ip = 0
+
 		if c.get("BOT", "identd") == "oidentd":
 			identfile = os.environ['HOME']+"/.oidentd.conf"
 			file = open(identfile, "r")
@@ -202,6 +226,7 @@ def main():
 			file = open(identfile, "w")
 			file.write('global { reply "%s" }' % c.get("BOT", "username"))
 			file.close()
+
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		putf('NICK '+_botnick)
 		putf('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
@@ -212,57 +237,72 @@ def main():
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
+
 		if e != lasterror:
 			lasterror = e
 			printe(e)
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
+
 	while 1:
 		try:
 			line=s.recv(102400)
+
 			if not line:
 				disconnect()
 				return 0
+
 			for line in line.splitlines():
 				reg = line.rstrip()
 				printc(line.rstrip())
+
 				if line.split()[1] == "001":
 					if c.get("BOT", "identd") == "oidentd":
 						file = open(identfile, "w")
 						file.write(content)
 						file.close()
+
 				if line.split()[1] == ":Closing":
 					disconnect()
 					return 0
+
 				if line.split()[0]=='PING':
 					putf('PONG '+line[5:])
+
 				line = line.rstrip()[1:]
+
 				if line.split()[1].lower() == "privmsg":
 					nick = line.split("!")[0]
 					uhost = line.split("!")[1].split()[0]
 					target = line.split()[2]
 					arg = ' '.join(line.split()[3:])[0:][1:]
 					cmd = line.split()[3][1:]
+
 					if arg.split()[0].lower() == "reload" and line.split()[2][0] != "#":
 						if src.user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
 							put("NOTICE " + nick + " :Reloading ...")
 							c.read("configs/main.conf")
 							__builtin__._botnick = c.get("BOT", "nick")
 							_cache.execute("delete from binds")
+
 							for loaded in _cache.execute("select name from src"):
 								loaded = loaded[0]
+
 								if not os.access("src/%s.py" % loaded, os.F_OK):
 									exec("del src.%s" % loaded)
 									exec("""del sys.modules["src.%s"]""" % loaded)
 									_cache.execute("delete from src where name='%s'" % loaded)
 									printa("src %s unloaded" % loaded)
+
 							for source in os.listdir("src"):
 								if source != "__init__.py" and source.endswith(".py"):
 									name = source.split(".py")[0]
 									entry = False
+
 									for loaded in _cache.execute("select name from src where name='%s'" % name):
 										entry = True
+
 									if entry is False:
 										exec("import src.%s" % name)
 										exec("src.%s.load()" % name)
@@ -272,19 +312,24 @@ def main():
 										exec("reload(src.%s)" % name)
 										exec("src.%s.load()" % name)
 										printa("src %s reloaded" % name)
+
 							for loaded in _cache.execute("select name from modules"):
 								loaded = loaded[0]
+
 								if not os.access("modules/%s.py" % loaded, os.F_OK):
 									exec("del modules.%s" % loaded)
 									exec("""del sys.modules["modules.%s"]""" % loaded)
 									_cache.execute("delete from modules where name='%s'" % loaded)
 									printa("module %s unloaded" % loaded)
+
 							for source in os.listdir("modules"):
 								if source != "__init__.py" and source.endswith(".py"):
 									name = source.split(".py")[0]
 									entry = False
+
 									for loaded in _cache.execute("select name from modules where name='%s'" % name):
 										entry = True
+
 									if entry is False:
 										exec("import modules.%s" % name)
 										exec("modules.%s.load()" % name)
@@ -294,57 +339,68 @@ def main():
 										exec("reload(modules.%s)" % name)
 										exec("modules.%s.load()" % name)
 										printa("module %s reloaded" % name)
+
 							put("NOTICE " + nick + " :Done.")
+
 					if arg.split()[0].lower() == "restart" and line.split()[2][0] != "#":
 						if src.user.getauth(nick) == c.get("ADMIN", "auth") or arg.split()[1] == c.get("ADMIN", "password"):
 							putf("QUIT :Restart ... I\'ll be back in %s seconds!" % c.get("SERVER", "reconnect"))
 							disconnect()
 							return 0
-					for hookconfig in _cache.execute("select * from binds"):
+
+					for hookconfig in _cache.execute("select name,module,command from binds where event == 'pub'"):
 						hook = str(hookconfig[0])
 						module = str(hookconfig[1])
-						event = str(hookconfig[2])
-						command = str(hookconfig[3])
-						if event == "pub" and target.startswith("#"):
+						command = str(hookconfig[2])
+
+						if target.startswith("#"):
  							if command != "" and cmd.lower() == command.lower():
 								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
 							elif command == "":
 								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
+
+					for hookconfig in _cache.execute("select name,module,command from binds where event == 'msg'"):
+						hook = str(hookconfig[0])
+						module = str(hookconfig[1])
+						command = str(hookconfig[2])
+
 						if event == "msg" and not target.startswith("#"):
 							if command != "" and cmd.lower() == command.lower():
 								exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, ' '.join(arg.split()[1:])))
 							elif command == "":
 								exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, arg))
+
 				elif line.split()[1].lower() == "notice" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 					nick = line.split("!")[0]
 					uhost = line.split("!")[1].split()[0]
 					target = line.split()[2]
 					arg = ' '.join(line.split()[3:])[0:][1:]
 					cmd = line.split()[3][1:]
-					for hookconfig in _cache.execute("select * from binds"):
+
+					for hookconfig in _cache.execute("select name,module,command from binds where event == 'not'"):
 						hook = str(hookconfig[0])
 						module = str(hookconfig[1])
-						event = str(hookconfig[2])
-						command = str(hookconfig[3])
-						if event == "not":
-							if command != "" and cmd.lower() == command.lower():
-								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
-							elif command == "":
-								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
-				for hookconfig in _cache.execute("select * from binds"):
+						command = str(hookconfig[2])
+
+						if command != "" and cmd.lower() == command.lower():
+							exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
+						elif command == "":
+							exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
+
+				for hookconfig in _cache.execute("select name,module,command from binds where event == 'raw'"):
 					hook = str(hookconfig[0])
 					module = str(hookconfig[1])
-					event = str(hookconfig[2])
-					command = str(hookconfig[3])
-					if event == "raw":
-						cmdo = line.split()[1]
-						if command != "" and cmdo.lower() == command.lower():
-							exec("""%s.%s("%s")""" % (module, hook, reg))
-						elif command == "":
-							exec("""%s.%s("%s")""" % (module, hook, reg))
+					command = str(hookconfig[2])
+					cmdo = line.split()[1]
+
+					if command != "" and cmdo.lower() == command.lower():
+						exec("""%s.%s("%s")""" % (module, hook, reg))
+					elif command == "":
+						exec("""%s.%s("%s")""" % (module, hook, reg))
 		except Exception:
 			et, ev, tb = sys.exc_info()
 			e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
+
 			if e != lasterror:
 				lasterror = e
 				printe(e)
@@ -363,7 +419,8 @@ if __name__ == '__main__':
 				shell("sqlite3 database/chan.db < database/chan.sql")
 				shell("sqlite3 database/user.db < database/user.sql")
 				print("Databases created")
-			if sys.argv[1].lower() == "configure":
+
+			elif sys.argv[1].lower() == "configure":
 				cadd = "\033[1m\033[34m"
 				cdel = "\033[0m"
 				c = ConfigParser.RawConfigParser()
@@ -405,7 +462,8 @@ if __name__ == '__main__':
 					c.write(configfile)
 				printc("Config file written :)")
 				printc("Run '%s' to start me :D" % sys.argv[0])
-			if sys.argv[1].lower() == "-h" or sys.argv[1].lower() == "--help":
+
+			elif sys.argv[1].lower() == "-h" or sys.argv[1].lower() == "--help":
 				printa(sys.argv[0]+" database		creates new databases")
 				printa(sys.argv[0]+" configure		config maker")
 		else:
@@ -414,5 +472,7 @@ if __name__ == '__main__':
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
 		printe(e)
-	except KeyboardInterrupt: printe("\nAborting ... CTRL + C")
+	except KeyboardInterrupt:
+		printe("\nAborting ... CTRL + C")
+
 	sys.exit(2)

@@ -18,6 +18,7 @@ def nick_in_use(text):
 
 def on_quit(text):
 	_userdb.execute("delete from auth where nick='%s'" % text.split()[0][1:].split("!")[0])
+
 	if text.lower().split()[0][1:].split("!")[0] == _botnick.lower():
 		_cache.execute("update botnick set name='%s'" % _botnick)
 		put("NICK %s" % _botnick)
@@ -46,10 +47,13 @@ def on_nickchange(text):
 	for data in _cache.execute("select name from botnick"):
 		if text.split()[0][1:].split("!")[0] == str(data[0]):
 			_cache.execute("update botnick set name='%s'" % text.split()[2])
+
 	if text.lower().split()[0][1:].split("!")[0] == _botnick.lower():
 		_cache.execute("update botnick set name='%s'" % _botnick)
 		put("NICK %s" % _botnick)
+
 	_userdb.execute("delete from auth where nick='%s'" % text.split()[0][1:].split("!")[0])
+
 	if text.split()[2].startswith(":"):
 		whois(text.split()[2][1:])
 	else:

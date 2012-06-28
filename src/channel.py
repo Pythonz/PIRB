@@ -44,12 +44,15 @@ def kick(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) != 0:
 			target = arg.split()[0]
 			reason = "Requested."
+
 			if len(arg.split()) != 1:
 				reason = ' '.join(arg.split()[1:])
+
 			put("KICK %s %s :%s" % (chan,target,reason))
 
 def invite(nick,host,chan,arg):
@@ -57,6 +60,7 @@ def invite(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		for user in arg.split():
 			put("INVITE %s %s" % (user,chan))
@@ -66,6 +70,7 @@ def op(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) != 0:
 			mode = "o"*len(arg.split())
@@ -78,6 +83,7 @@ def deop(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) != 0:
 			mode = "o"*len(arg.split())
@@ -90,6 +96,7 @@ def voice(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) != 0:
 			mode = "v"*len(arg.split())
@@ -102,6 +109,7 @@ def devoice(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if len(arg.split()) != 0:
 			mode = "v"*len(arg.split())
@@ -116,12 +124,15 @@ def ban(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if wmatch(target, "*!*@*"):
 			if scut.startswith("+"):
 				entry = False
+
 				for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
 					entry = True
+
 				if entry is False:
 					_chandb.execute("insert into bans values ('%s','%s')" % (chan,target))
 					put("NOTICE %s :[%s] %s has been added to the banlist" % (nick,chan,target))
@@ -130,8 +141,10 @@ def ban(nick,host,chan,arg):
 					put("NOTICE %s :[%s] %s is already on the banlist" % (nick,chan,target))
 			elif scut.startswith("-"):
 				entry = False
+
 				for data in _chandb.execute("select ban from bans where channel='%s' and ban='%s'" % (chan,target)):
 					entry = True
+
 				if entry is True:
 					_chandb.execute("delete from bans where channel='%s' and ban='%s'" % (chan,target))
 					put("NOTICE %s :[%s] %s has been removed from the banlist" % (nick,chan,target))
@@ -151,12 +164,15 @@ def exempt(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostmask = nick+"!"+host
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		if wmatch(target, "*!*@*"):
 			if scut.startswith("+"):
 				entry = False
+
 				for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
 					entry = True
+
 				if entry is False:
 					_chandb.execute("insert into exempts values ('%s','%s')" % (chan,target))
 					put("NOTICE %s :[%s] %s has been added to the exemptlist" % (nick,chan,target))
@@ -165,8 +181,10 @@ def exempt(nick,host,chan,arg):
 					put("NOTICE %s :[%s] %s is already on the exemptlist" % (nick,chan,target))
 			elif scut.startswith("-"):
 				entry = False
+
 				for data in _chandb.execute("select exempt from exempts where channel='%s' and exempt='%s'" % (chan,target)):
 					entry = True
+
 				if entry is True:
 					_chandb.execute("delete from exempts where channel='%s' and exempt='%s'" % (chan,target))
 					put("NOTICE %s :[%s] %s has been removed from the exemptlist" % (nick,chan,target))
@@ -184,6 +202,7 @@ def channel_modes(nick,host,chan,arg):
 	hostmask = nick+"!"+host
 	flag = getflag(chan,auth)
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		_chandb.execute("update info set modes='%s' where channel='%s'" % (arg,chan))
 		put("MODE %s %s" % (chan,arg))
@@ -193,12 +212,14 @@ def channel_topic(nick,host,chan,arg):
 	hostmask = nick+"!"+host
 	flag = getflag(chan,auth)
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		_chandb.execute("update info set topic='%s' where channel='%s'" % (arg,chan))
 		put("TOPIC %s :%s" % (chan,arg))
 
 def on_topic(text):
 	nick = text.split()[0][1:].split("!")[0]
+
 	for mynick in _cache.execute("select name from botnick"):
 		if nick != str(mynick[0]) and nick != "Q" and nick != "ChanServ":
 			for data in _chandb.execute("select topic from info where channel='%s'" % text.split()[2]):
@@ -206,6 +227,7 @@ def on_topic(text):
 
 def on_mode(text):
 	nick = text.split()[0][1:].split("!")[0]
+
 	for mynick in _cache.execute("select name from botnick"):
 		if nick != str(mynick[0]):
 			for data in _chandb.execute("select modes from info where channel='%s'" % text.split()[2]):
@@ -213,6 +235,7 @@ def on_mode(text):
 
 def channel_invite(text):
 	chan = text.split()[3]
+
 	if chan.startswith(":"):
 		for data in _chandb.execute("select channel from list where channel='%s'" % chan[1:]):
 			put("JOIN %s" % chan[1:])
@@ -225,12 +248,15 @@ def channel_addop(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	target = getauth(arg.split()[0])
 	uatarget = arg.split()[0]
+
 	if flag == "n":
 		if auth != target:
 			if wmatch(uatarget, "*!*@*"):
 				entry = False
+
 				for data in _chandb.execute("select flags from channel where channel='%s' and auth = '%s' and flags='o'" % (chan,uatarget)):
 					entry = True
+
 				if entry is False:
 					_chandb.execute("insert into channel values ('%s','%s','o')" % (chan,uatarget))
 					put("NOTICE %s :[%s] %s has been added to the operators list" % (nick,chan,uatarget))
@@ -238,8 +264,10 @@ def channel_addop(nick,host,chan,arg):
 					put("NOTICE %s :[%s] %s is already on the operators list" % (nick,chan,uatarget))
 			else:
 				entry = False
+
 				for data in _chandb.execute("select flags from channel where channel='%s' and auth='%s' and flags='o'" % (chan,target)):
 					entry = True
+
 				if entry is False:
 					_chandb.execute("insert into channel values ('%s','%s','o')" % (chan,target))
 					put("NOTICE %s :[%s] %s has been added to the operators list" % (nick,chan,target))
@@ -254,12 +282,15 @@ def channel_delop(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	target = getauth(arg.split()[0])
 	uatarget = arg.split()[0]
+
 	if flag == "n":
 		if auth != target:
 			if wmatch(uatarget, "*!*@*"):
 				entry = True
+
 				for data in _chandb.execute("select flags from channel where channel='%s' and auth = '%s' and flags='o'" % (chan,uatarget)):
 					entry = False
+
 				if entry is False:
 					_chandb.execute("delete from channel where channel='%s' and auth='%s' and flags='o'" % (chan,uatarget))
 					put("NOTICE %s :[%s] %s has been removed from the operators list" % (nick,chan,uatarget))
@@ -267,8 +298,10 @@ def channel_delop(nick,host,chan,arg):
 					put("NOTICE %s :[%s] %s is not on the operators list" % (nick,chan,uatarget))
 			else:
 				entry = True
+
 				for data in _chandb.execute("select flags from channel where channel='%s' and auth='%s' and flags='o'" % (chan,target)):
 					entry = False
+
 				if entry is False:
 					_chandb.execute("delete from channel where channel='%s' and auth='%s' and flags='o'" % (chan,target))
 					put("NOTICE %s :[%s] %s has been removed from the operators list" % (nick,chan,target))
@@ -283,12 +316,15 @@ def channel_addvoice(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	target = getauth(arg.split()[0])
 	uatarget = arg.split()[0]
+
 	if flag == "n":
 		if auth != target:
 			if wmatch(uatarget, "*!*@*"):
 				entry = False
+
 				for data in _chandb.execute("select flags from channel where channel='%s' and auth = '%s' and flags='v'" % (chan,uatarget)):
 					entry = True
+
 				if entry is False:
 					_chandb.execute("insert into channel values ('%s','%s','v')" % (chan,uatarget))
 					put("NOTICE %s :[%s] %s has been added to the voices list" % (nick,chan,uatarget))
@@ -296,8 +332,10 @@ def channel_addvoice(nick,host,chan,arg):
 					put("NOTICE %s :[%s] %s is already on the voices list" % (nick,chan,uatarget))
 			else:
 				entry = False
+
 				for data in _chandb.execute("select flags from channel where channel='%s' and auth='%s' and flags='v'" % (chan,target)):
 					entry = True
+
 				if entry is False:
 					_chandb.execute("insert into channel values ('%s','%s','v')" % (chan,target))
 					put("NOTICE %s :[%s] %s has been added to the voices list" % (nick,chan,target))
@@ -312,12 +350,15 @@ def channel_delvoice(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	target = getauth(arg.split()[0])
 	uatarget = arg.split()[0]
+
 	if flag == "n":
 		if auth != target:
 			if wmatch(uatarget, "*!*@*"):
 				entry = True
+
 				for data in _chandb.execute("select flags from channel where channel='%s' and auth = '%s' and flags='v'" % (chan,uatarget)):
 					entry = False
+
 				if entry is False:
 					_chandb.execute("delete from channel where channel='%s' and auth='%s' and flags='v'" % (chan,uatarget))
 					put("NOTICE %s :[%s] %s has been removed from the voices list" % (nick,chan,uatarget))
@@ -325,8 +366,10 @@ def channel_delvoice(nick,host,chan,arg):
 					put("NOTICE %s :[%s] %s is not on the voices list" % (nick,chan,uatarget))
 			else:
 				entry = True
+
 				for data in _chandb.execute("select flags from channel where channel='%s' and auth='%s' and flags='v'" % (chan,target)):
 					entry = False
+
 				if entry is False:
 					_chandb.execute("delete from channel where channel='%s' and auth='%s' and flags='v'" % (chan,target))
 					put("NOTICE %s :[%s] %s has been removed from the voices list" % (nick,chan,target))
@@ -339,19 +382,25 @@ def channel_delvoice(nick,host,chan,arg):
 def channel_listuser(nick,host,chan,arg):
 	for owner in _chandb.execute("select auth from channel where channel='%s' and flags='n'" % chan):
 		put("NOTICE %s :[%s] %s is the owner" % (nick,chan,owner[0]))
+
 	op = list()
+
 	for operator in _chandb.execute("select auth from channel where channel='%s' and flags='o'" % chan):
 		op.append(str(operator[0]))
+
 	operators = ' '.join(op)
 	put("NOTICE %s :[%s] Operators: %s" % (nick,chan,operators))
 	v = list()
+
 	for voice in _chandb.execute("select auth from channel where channel='%s' and flags='v'" % chan):
 		v.append(str(voice[0]))
+
 	voices = ' '.join(v)
 	put("NOTICE %s :[%s] Voices: %s" % (nick,chan,voices))
 
 def channel_join(text):
 	putf("JOIN %s" % c.get("BOT", "channels"))
+
 	for data in _chandb.execute("select channel from list"):
 		put("JOIN %s" % data[0])
 
@@ -359,12 +408,14 @@ def channel_kick(text):
 	nick = text.split()[0][1:].split("!")[0]
 	chan = text.split()[2]
 	target = text.split()[3]
+
 	if target.find(c.get("BOT", "nick")) != -1:
 		put("JOIN %s" % chan)
 
 def channel_register(nick,uhost,arg):
 	password = arg.split()[0]
 	channel = arg.split()[1]
+
 	if password == c.get("ADMIN", "password"):
 		_chandb.execute("insert into list values ('%s')" % channel)
 		put("JOIN %s" % channel)
@@ -375,6 +426,7 @@ def channel_register(nick,uhost,arg):
 def channel_drop(nick,uhost,arg):
 	password = arg.split()[0]
 	channel = arg.split()[1]
+
 	if password == c.get("ADMIN", "password"):
 		_chandb.execute("delete from list where channel='%s'" % channel)
 		put("PART %s" % channel)
@@ -386,16 +438,19 @@ def on_join_chan(text):
 	nick = text.split()[0][1:].split("!")[0]
 	whois(nick)
 	hostmask = text.split()[0][1:]
+
 	if text.split()[2].startswith(":"):
 		chan = text.split()[2][1:]
 	else:
 		chan = text.split()[2]
+
 	auth = getauth(nick)
 	flag = getflag(chan,auth)
 	hostflag = gethostflag(chan,hostmask)
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		putf("MODE %s +o %s" % (chan,nick))
-	if flag == "v" or hostflag == "v":
+	elif flag == "v" or hostflag == "v":
 		putf("MODE %s +v %s" % (chan,nick))
 
 def channel_auth(nick,host,chan,arg):
@@ -407,9 +462,10 @@ def channel_auth(nick,host,chan,arg):
 	flag = getflag(chan,auth)
 	hostflag = gethostflag(chan,hostmask)
 	put("NOTICE %s :[%s] Flag: %s, Hostflag: %s" % (nick,chan,flag,hostflag))
+
 	if flag == "n" or flag == "o" or hostflag == "o":
 		putf("MODE %s +o %s" % (chan,nick))
-	if flag == "v" or hostflag == "v":
+	elif flag == "v" or hostflag == "v":
 		putf("MODE %s +v %s" % (chan,nick))
 
 def channel_msg_auth(nick,host,arg):
@@ -425,9 +481,10 @@ def channel_msg_auth(nick,host,arg):
 		flag = getflag(chan,auth)
 		hostflag = gethostflag(chan,hostmask)
 		put("NOTICE %s :[%s] Flag: %s, Hostflag: %s" % (nick,chan,flag,hostflag))
+
 		if flag == "n" or flag == "o" or hostflag == "o":
 			putf("MODE %s +o %s" % (chan,nick))
-		if flag == "v" or hostflag == "v":
+		elif flag == "v" or hostflag == "v":
 			putf("MODE %s +v %s" % (chan,nick))
 	else:
 		irc_send(nick, "invalid channel")
