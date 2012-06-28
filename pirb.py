@@ -148,10 +148,16 @@ def put_query():
 
 		data.close()
 		printa("put_query worker has been interrupted.")
+		thread.start_new_thread(put_query, ())
+		printa("Started new put_query-thread.")
 	except Exception,e:
-		printe(e)
-	except socket.error:
-		pass
+		printe(str(e))
+		thread.start_new_thread(put_query, ())
+		printa("Started put_query-thread.")
+	except socket.error,e:
+		print(str(e))
+		thread.start_new_thread(put_query, ())
+		printa("Started put_query-thread.")
 	except KeyboardInterrupt:
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
