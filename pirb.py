@@ -247,7 +247,7 @@ def main():
 
 	while True:
 		try:
-			line=s.recv(102400)
+			line=s.recv(1024000)
 
 			if not line:
 				disconnect()
