@@ -453,7 +453,7 @@ if __name__ == '__main__':
 				for option in options:
 					if c.has_section(option[0]):
 						value = ""
-						text = option[1].capitalize()
+						text = option[0].capitalize() + "-" + option[1].capitalize()
 
 						if len(option) == 4:
 							if option[2] == "int":
