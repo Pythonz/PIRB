@@ -238,7 +238,7 @@ def on_mode(nick,uhost,chan,arg):
 				put("MODE %s %s" % (chan,str(data[0])))
 
 def channel_invite(nick,uhost,chan,target):
-	if target.lower() == botnick().lower()
+	if target.lower() == botnick().lower():
 		for data in _chandb.execute("select channel from list where channel='%s'" % chan):
 			put("JOIN %s" % chan)
 
