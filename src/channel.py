@@ -1,14 +1,14 @@
-from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
+from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan,botnick
 from src.user import getauth
 from fnmatch import fnmatch as wmatch
 from src.irc import irc_send
 
 def load():
 	bind("channel_join","raw","001")
-	bind("channel_kick","raw","KICK")
+	bind("channel_kick","kick")
 	bind("channel_register","msg","register")
 	bind("channel_drop","msg","drop")
-	bind("on_join_chan","raw","JOIN")
+	bind("on_join_chan","join")
 	bind("channel_addop","pub","$addop")
 	bind("channel_delop","pub","$delop")
 	bind("channel_addvoice","pub","$addvoice")
@@ -16,11 +16,11 @@ def load():
 	bind("channel_listuser","pub","$users")
 	bind("channel_auth","pub","$auth")
 	bind("channel_msg_auth","msg","auth")
-	bind("channel_invite","raw","INVITE")
+	bind("channel_invite","invite")
 	bind("channel_modes","pub","$mode")
 	bind("channel_topic","pub","$topic")
-	bind("on_topic","raw","TOPIC")
-	bind("on_mode","raw","MODE")
+	bind("on_topic","topic")
+	bind("on_mode","mode")
 	bind("ban","pub","$ban")
 	bind("exempt","pub","$exempt")
 	bind("op","pub","$op")
@@ -225,29 +225,20 @@ def channel_topic(nick,host,chan,arg):
 		_chandb.execute("update info set topic='%s' where channel='%s'" % (arg,chan))
 		put("TOPIC %s :%s" % (chan,arg))
 
-def on_topic(text):
-	nick = text.split()[0][1:].split("!")[0]
-
+def on_topic(nick,uhost,chan,arg):
 	for mynick in _cache.execute("select name from botnick"):
 		if nick != str(mynick[0]) and nick != "Q" and nick != "ChanServ":
-			for data in _chandb.execute("select topic from info where channel='%s'" % text.split()[2]):
-				put("TOPIC %s :%s" % (text.split()[2],str(data[0])))
+			for data in _chandb.execute("select topic from info where channel='%s'" % chan):
+				put("TOPIC %s :%s" % (chan,str(data[0])))
 
-def on_mode(text):
-	nick = text.split()[0][1:].split("!")[0]
-
+def on_mode(nick,uhost,chan,arg):
 	for mynick in _cache.execute("select name from botnick"):
 		if nick != str(mynick[0]):
-			for data in _chandb.execute("select modes from info where channel='%s'" % text.split()[2]):
-				put("MODE %s %s" % (text.split()[2],str(data[0])))
+			for data in _chandb.execute("select modes from info where channel='%s'" % chan):
+				put("MODE %s %s" % (chan,str(data[0])))
 
-def channel_invite(text):
-	chan = text.split()[3]
-
-	if chan.startswith(":"):
-		for data in _chandb.execute("select channel from list where channel='%s'" % chan[1:]):
-			put("JOIN %s" % chan[1:])
-	else:
+def channel_invite(nick,uhost,chan,target):
+	if target.lower() == botnick().lower()
 		for data in _chandb.execute("select channel from list where channel='%s'" % chan):
 			put("JOIN %s" % chan)
 
@@ -412,13 +403,11 @@ def channel_join(text):
 	for data in _chandb.execute("select channel from list"):
 		put("JOIN %s" % data[0])
 
-def channel_kick(text):
-	nick = text.split()[0][1:].split("!")[0]
-	chan = text.split()[2]
-	target = text.split()[3]
-
-	if target.find(c.get("BOT", "nick")) != -1:
-		put("JOIN %s" % chan)
+def channel_kick(nick,uhost,chan,target,arg):
+	for data in _cache.execute("select name from botnick"):
+		for user in target.split(","):
+			if user.lower() == str(data[0]).lower():
+				put("JOIN %s" % chan)
 
 def channel_register(nick,uhost,arg):
 	password = arg.split()[0]
@@ -442,15 +431,9 @@ def channel_drop(nick,uhost,arg):
 		_chandb.execute("delete from channel where channel='%s'" % channel)
 		_chandb.execute("delete from info where channel='%s'" % channel)
 
-def on_join_chan(text):
-	nick = text.split()[0][1:].split("!")[0]
+def on_join_chan(nick,uhost,chan):
 	whois(nick)
-	hostmask = text.split()[0][1:]
-
-	if text.split()[2].startswith(":"):
-		chan = text.split()[2][1:]
-	else:
-		chan = text.split()[2]
+	hostmask = nick + "!" + uhost
 
 	auth = getauth(nick)
 	flag = getflag(chan,auth)

@@ -95,6 +95,10 @@ def whochan(channel):
 	else:
 		putf("WHO %s" % channel)
 
+def botnick():
+	for data in _cache.execute("select name from botnick"):
+		return str(data[0])
+
 def keepnick():
 	try:
 		time.sleep(60)
@@ -270,7 +274,7 @@ def main():
 						disconnect()
 						return 0
 
-					if line.split()[0]=='PING':
+					if line.split()[0] == 'PING':
 						putf('PONG '+line[5:])
 
 					line = line.rstrip()[1:]
@@ -388,6 +392,111 @@ def main():
 								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
 							elif command == "":
 								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
+					elif line.split()[1].lower() == "topic" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						target = line.split()[2]
+
+						if len(line.split()) > 3:
+							arg = ' '.join(line.split()[3:])[0:][1:]
+						else:
+							arg = ""
+
+						for hookconfig in _cache.execute("select name,module from binds where event == 'topic'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							exec("""%s.%s("%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, target, arg))
+					elif line.split()[1].lower() == "mode" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1 and line.split()[2][0] == "#":
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						target = line.split()[2]
+
+						if len(line.split()) > 3:
+							arg = ' '.join(line.split()[3:])[0:][1:]
+						else:
+							arg = ""
+
+						for hookconfig in _cache.execute("select name,module from binds where event == 'mode'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							exec("""%s.%s("%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, target, arg))
+					elif line.split()[1].lower() == "join" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						target = line.split()[2]
+
+						for hookconfig in _cache.execute("select name,module from binds where event == 'join'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							exec("""%s.%s("%s", "%s", "%s")""" % (module, hook, nick, uhost, target))
+					elif line.split()[1].lower() == "part" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						target = line.split()[2]
+
+						if len(line.split()) > 3:
+							arg = ' '.join(line.split()[3:])[0:][1:]
+						else:
+							arg = ""
+
+						for hookconfig in _cache.execute("select name,module from binds where event == 'part'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							exec("""%s.%s("%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, target, arg))
+					elif line.split()[1].lower() == "quit" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+
+						if len(line.split()) > 2:
+							arg = ' '.join(line.split()[2:])[0:][1:]
+						else:
+							arg = ""
+
+						for hookconfig in _cache.execute("select name,module from binds where event == 'quit'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							exec("""%s.%s("%s", "%s", "%s")""" % (module, hook, nick, uhost, arg))
+					elif line.split()[1].lower() == "nick" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						target = line.split()[2]
+
+						if target.startswith(":"):
+							target = target[1:]
+
+						for hookconfig in _cache.execute("select name,module from binds where event == 'nick'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							exec("""%s.%s("%s", "%s", "%s")""" % (module, hook, nick, uhost, target))
+					elif line.split()[1].lower() == "kick" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						chan = line.split()[2]
+						target = line.split()[3]
+
+						if len(line.split()) > 4:
+							arg = ' '.join(line.split()[4:])[0:][1:]
+						else:
+							arg = ""
+
+						for hookconfig in _cache.execute("select name,module from binds where event == 'kick'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, chan, target, arg))
+					elif line.split()[1].lower() == "invite" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
+						nick = line.split("!")[0]
+						uhost = line.split("!")[1].split()[0]
+						target = line.split()[2]
+						chan = line.split()[3]
+
+						if chan.startswith(":"):
+							chan = chan[1:]
+
+						for hookconfig in _cache.execute("select name,module from binds where event == 'invite'"):
+							hook = str(hookconfig[0])
+							module = str(hookconfig[1])
+							exec("""%s.%s("%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, chan, target))
+
 
 					for hookconfig in _cache.execute("select name,module,command from binds where event == 'raw'"):
 						hook = str(hookconfig[0])

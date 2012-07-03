@@ -3,12 +3,12 @@ from pirb import put,putf,bind,c,printa,printc,printe,whois,whochan
 def load():
 	bind("nick_in_use","raw","433")
 	if c.getboolean("BOT", "auth-reader"):
-		bind("on_quit","raw","QUIT")
+		bind("on_quit","quit")
 		bind("whois_330","raw","330")
 		bind("who_354", "raw", "354")
 		bind("check_user","raw","352")
 		bind("on_366","raw","366")
-		bind("on_nickchange","raw","NICK")
+		bind("on_nickchange","nick")
 		bind("whois_307","raw","307")
 
 def nick_in_use(text):
@@ -16,10 +16,10 @@ def nick_in_use(text):
 		putf("NICK %s_" % str(data[0]))
 		_cache.execute("update botnick set name='%s_'" % str(data[0]))
 
-def on_quit(text):
-	_userdb.execute("delete from auth where nick='%s'" % text.split()[0][1:].split("!")[0])
+def on_quit(nick,uhost,arg):
+	_userdb.execute("delete from auth where nick='%s'" % nick)
 
-	if text.lower().split()[0][1:].split("!")[0] == _botnick.lower():
+	if nick.lower() == _botnick.lower():
 		_cache.execute("update botnick set name='%s'" % _botnick)
 		put("NICK %s" % _botnick)
 
@@ -43,21 +43,18 @@ def check_user(text):
 def on_366(text):
 	whochan(text.split()[3])
 
-def on_nickchange(text):
+def on_nickchange(nick,uhost,newnick):
 	for data in _cache.execute("select name from botnick"):
-		if text.split()[0][1:].split("!")[0] == str(data[0]):
-			_cache.execute("update botnick set name='%s'" % text.split()[2])
+		if nick == str(data[0]):
+			_cache.execute("update botnick set name='%s'" % newnick)
 
-	if text.lower().split()[0][1:].split("!")[0] == _botnick.lower():
+	if nick.lower() == _botnick.lower():
 		_cache.execute("update botnick set name='%s'" % _botnick)
 		put("NICK %s" % _botnick)
 
-	_userdb.execute("delete from auth where nick='%s'" % text.split()[0][1:].split("!")[0])
+	_userdb.execute("delete from auth where nick='%s'" % nick)
 
-	if text.split()[2].startswith(":"):
-		whois(text.split()[2][1:])
-	else:
-		whois(text.split()[2])
+	whois(newnick)
 
 def getauth(nick):
 	if c.getboolean("BOT", "auth-reader"):
