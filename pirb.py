@@ -171,11 +171,11 @@ def put_query():
 
 def scheduler_thread():
 	try:
-		__builtin__._cache = sqlite3.connect("database/cache.db")
+		_cache = sqlite3.connect("database/cache.db")
 		_cache.isolation_level = None
-		__builtin__._userdb = sqlite3.connect("database/user.db")
+		_userdb = sqlite3.connect("database/user.db")
 		_userdb.isolation_level = None
-		__builtin__._chandb = sqlite3.connect("database/chan.db")
+		_chandb = sqlite3.connect("database/chan.db")
 		_chandb.isolation_level = None
 		time_minute = time.strftime("%M", time.localtime())
 		time_hour = time.strftime("%H", time.localtime())
