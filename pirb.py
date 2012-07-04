@@ -175,6 +175,7 @@ def scheduler_thread():
 	time_day = time.strftime("%d", time.localtime())
 	time_month = time.strftime("%m", time.localtime())
 	time_year = time.strftime("%y", time.localtime())
+	printe("##################### " + _botnick)
 
 	try:
 		for hookconfig in _cache.execute("select name,module,command from binds where event == 'time'"):
