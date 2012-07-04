@@ -122,15 +122,9 @@ def keepnick():
 
 def disconnect():
 	try:
-		_timer.shutdown()
+		__timer.shutdown()
 		s.close()
-		_userdb.close()
-		_chandb.close()
-		_cache.close()
-		printa("connection closed")
-		printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
-		time.sleep(int(c.get("SERVER", "reconnect")))
-		main()
+		return 0
 	except Exception,e:
 		printe(e)
 	except socket.error:
@@ -171,11 +165,11 @@ def put_query():
 
 def scheduler_thread():
 	try:
-		_cache = sqlite3.connect("database/cache.db")
+		__builtin__._cache = sqlite3.connect("database/cache.db")
 		_cache.isolation_level = None
-		_userdb = sqlite3.connect("database/user.db")
+		__builtin__._userdb = sqlite3.connect("database/user.db")
 		_userdb.isolation_level = None
-		_chandb = sqlite3.connect("database/chan.db")
+		__builtin__._chandb = sqlite3.connect("database/chan.db")
 		_chandb.isolation_level = None
 		time_minute = time.strftime("%M", time.localtime())
 		time_hour = time.strftime("%H", time.localtime())
@@ -223,22 +217,8 @@ def main():
 	global _ip
 	global lasterror
 	global _timer
-	__builtin__._botnick = c.get("BOT", "nick")
-	__builtin__._cache = sqlite3.connect("database/cache.db")
-	_cache.isolation_level = None
-	_cache.execute("delete from src")
-	_cache.execute("delete from modules")
-	_cache.execute("delete from binds")
-	_cache.execute("delete from botnick")
-	_cache.execute("insert into botnick values ('%s')" % _botnick)
-	__builtin__._userdb = sqlite3.connect("database/user.db")
-	_userdb.isolation_level = None
-	_userdb.execute("delete from auth")
-	__builtin__._chandb = sqlite3.connect("database/chan.db")
-	_chandb.isolation_level = None
-	_timer = Scheduler()
-	_timer.add_cron_job(scheduler_thread, second=0)
-	_timer.start()
+	global src_counter
+	global mod_counter
 
 	if c.getboolean("SERVER", "ipv6") and socket.has_ipv6:
 		if c.getboolean("SERVER", "ssl"):
@@ -253,28 +233,6 @@ def main():
 
 	try:
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-		src_counter = 0
-
-		for source in os.listdir("src"):
-			if source != "__init__.py" and source.endswith(".py"):
-				exec("import src.%s" % source.split(".py")[0])
-				exec("src.%s.load()" % source.split(".py")[0])
-				_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
-				src_counter += 1
-				printa("src %s loaded" % source.split(".py")[0])
-
-		printa("Loaded {0} sources.".format(src_counter))
-		mod_counter = 0
-
-		for mod in os.listdir("modules"):
-			if mod != "__init__.py" and mod.endswith(".py"):
-				exec("import modules.%s" % mod.split(".py")[0])
-				exec("modules.%s.load()" % mod.split(".py")[0])
-				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
-				mod_counter += 1
-				printa("module %s loaded" % mod.split(".py")[0])
-
-		printa("Loaded {0} modules.".format(mod_counter))
 
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind").split()[_ip], 0))
@@ -296,6 +254,9 @@ def main():
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		putf('NICK '+_botnick)
 		putf('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
+		__builtin__.__timer = Scheduler()
+		__timer.add_cron_job(scheduler_thread, second=0)
+		__timer.start()
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
@@ -574,7 +535,6 @@ def main():
 				lasterror = e
 				printe(e)
 		except socket.error:
-			disconnect()
 			return 0
 		except KeyboardInterrupt:
 			printe("\nAborting ... CTRL + C")
@@ -695,11 +655,56 @@ if __name__ == '__main__':
 				print(sys.argv[0]+" database		creates new databases")
 				print(sys.argv[0]+" configure		config maker")
 		else:
-			thread.start_new_thread(put_query, ())
-			printa("Started put_query-thread.")
-			thread.start_new_thread(keepnick, ())
-			printa("Started keepnick-thread.")
-			main()
+			while True:
+				c.read("configs/main.conf")
+				global src_counter
+				global mod_counter
+				thread.start_new_thread(put_query, ())
+				printa("Started put_query-thread.")
+				thread.start_new_thread(keepnick, ())
+				printa("Started keepnick-thread.")
+				__builtin__._cache = sqlite3.connect("database/cache.db")
+				_cache.isolation_level = None
+				__builtin__._userdb = sqlite3.connect("database/user.db")
+				_userdb.isolation_level = None
+				__builtin__._chandb = sqlite3.connect("database/chan.db")
+				_chandb.isolation_level = None
+				__builtin__._botnick = c.get("BOT", "nick")
+				_cache.execute("delete from src")
+				_cache.execute("delete from modules")
+				_cache.execute("delete from binds")
+				_cache.execute("delete from botnick")
+				_cache.execute("insert into botnick values ('%s')" % _botnick)
+				_userdb.execute("delete from auth")
+				src_counter = 0
+
+				for source in os.listdir("src"):
+					if source != "__init__.py" and source.endswith(".py"):
+						exec("import src.%s" % source.split(".py")[0])
+						exec("src.%s.load()" % source.split(".py")[0])
+						_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
+						src_counter += 1
+						printa("src %s loaded" % source.split(".py")[0])
+
+				printa("Loaded {0} sources.".format(src_counter))
+				mod_counter = 0
+
+				for mod in os.listdir("modules"):
+					if mod != "__init__.py" and mod.endswith(".py"):
+						exec("import modules.%s" % mod.split(".py")[0])
+						exec("modules.%s.load()" % mod.split(".py")[0])
+						_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
+						mod_counter += 1
+						printa("module %s loaded" % mod.split(".py")[0])
+
+				printa("Loaded {0} modules.".format(mod_counter))
+				main()
+				_userdb.close()
+				_chandb.close()
+				_cache.close()
+				printa("connection closed")
+				printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
+				time.sleep(int(c.get("SERVER", "reconnect")))
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
