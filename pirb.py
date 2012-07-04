@@ -169,17 +169,14 @@ def put_query():
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
 
-def scheduler_action():
-	printa("Executing cron tasks.")
-
-def scheduler_thread(event):
+def scheduler_thread():
 	try:
-#		_cache = sqlite3.connect("database/cache.db")
-#		_cache.isolation_level = None
-#		_userdb = sqlite3.connect("database/user.db")
-#		_userdb.isolation_level = None
-#		_chandb = sqlite3.connect("database/chan.db")
-#		_chandb.isolation_level = None
+		_cache = sqlite3.connect("database/cache.db")
+		_cache.isolation_level = None
+		_userdb = sqlite3.connect("database/user.db")
+		_userdb.isolation_level = None
+		_chandb = sqlite3.connect("database/chan.db")
+		_chandb.isolation_level = None
 		time_minute = time.strftime("%M", time.localtime())
 		time_hour = time.strftime("%H", time.localtime())
 		time_day = time.strftime("%d", time.localtime())
@@ -209,10 +206,10 @@ def scheduler_thread(event):
 				elif len(times) == 5:
 					if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day + " " + time_month + " " + time_year, command):
 						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
-#
-#		_cache.close()
-#		_userdb.close()
-#		_chandb.close()
+
+		_cache.close()
+		_userdb.close()
+		_chandb.close()
 	except Exception,e:
 		printe(str(e))
 	except socket.error,e:
@@ -240,8 +237,7 @@ def main():
 	__builtin__._chandb = sqlite3.connect("database/chan.db")
 	_chandb.isolation_level = None
 	_timer = Scheduler()
-	_timer.add_cron_job(scheduler_action, second=0)
-	_timer.add_listener(scheduler_thread)
+	_timer.add_cron_job(scheduler_thread, second=0)
 	_timer.start()
 
 	if c.getboolean("SERVER", "ipv6") and socket.has_ipv6:
