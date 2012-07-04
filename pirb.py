@@ -193,19 +193,19 @@ def scheduler_thread():
 
 				if len(times) == 1:
 					if fnmatch.fnmatch(time_minute, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
 				elif len(times) == 2:
 					if fnmatch.fnmatch(time_minute + " " + time_hour, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
 				elif len(times) == 3:
 					if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
 				elif len(times) == 4:
 					if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day + " " + time_month, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
 				elif len(times) == 5:
 					if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day + " " + time_month + " " + time_year, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
 
 		_cache.close()
 		_userdb.close()
