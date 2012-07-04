@@ -15,6 +15,8 @@ import traceback
 import ssl
 import inspect
 import base64
+import fnmatch
+import apscheduler
 
 __app__ = "PIRB"
 
@@ -166,6 +168,40 @@ def put_query():
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
 
+def scheduler_thread(cache_db, user_db, chan_db):
+	__builtin__._cache = cache_db
+	__builtin__._userdb = user_db
+	__builtin__._chandb = chan_db
+	time_minute = time.strftime("%M", time.localtime())
+	time_hour = time.strftime("%H", time.localtime())
+	time_day = time.strftime("%d", time.localtime())
+	time_month = time.strftime("%m", time.localtime())
+	time_year = time.strftime("%y", time.localtime())
+
+	for hookconfig in _cache.execute("select name,module,command from binds where event == 'time'"):
+		hook = str(hookconfig[0])
+		module = str(hookconfig[1])
+		command = str(hookconfig[2])
+
+		if command != "":
+			times = command.split()
+
+			if len(times) == 1:
+				if fnmatch.fnmatch(time_minute, command):
+					exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+			elif len(times) == 2:
+				if fnmatch.fnmatch(time_minute + " " + time_hour, command):
+					exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+			elif len(times) == 3:
+				if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day, command):
+					exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+			elif len(times) == 4:
+				if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day + " " + time_month, command):
+					exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+			elif len(times) == 5:
+				if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day + " " + time_month + " " + time_year, command):
+					exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+
 def main():
 	c.read("configs/main.conf")
 	global _ip
@@ -183,6 +219,9 @@ def main():
 	_userdb.execute("delete from auth")
 	__builtin__._chandb = sqlite3.connect("database/chan.db")
 	_chandb.isolation_level = None
+	_timer = apscheduler.scheduler.Scheduler()
+	_timer.add_cron_job(scheduler_thread, second=0, args=[_cache, _userdb, _chandb])
+	_timer.start()
 
 	if c.getboolean("SERVER", "ipv6") and socket.has_ipv6:
 		if c.getboolean("SERVER", "ssl"):
