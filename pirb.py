@@ -15,8 +15,6 @@ import traceback
 import ssl
 import inspect
 import base64
-import fnmatch
-from apscheduler.scheduler import Scheduler
 
 __app__ = "PIRB"
 
@@ -122,9 +120,14 @@ def keepnick():
 
 def disconnect():
 	try:
-		__timer.shutdown()
 		s.close()
-		return 0
+		_userdb.close()
+		_chandb.close()
+		_cache.close()
+		printa("connection closed")
+		printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
+		time.sleep(int(c.get("SERVER", "reconnect")))
+		main()
 	except Exception,e:
 		printe(e)
 	except socket.error:
@@ -163,62 +166,24 @@ def put_query():
 		printe("\nAborting ... CTRL + C")
 		sys.exit(2)
 
-def scheduler_thread():
-	try:
-		__builtin__._cache = sqlite3.connect("database/cache.db")
-		_cache.isolation_level = None
-		__builtin__._userdb = sqlite3.connect("database/user.db")
-		_userdb.isolation_level = None
-		__builtin__._chandb = sqlite3.connect("database/chan.db")
-		_chandb.isolation_level = None
-		time_minute = time.strftime("%M", time.localtime())
-		time_hour = time.strftime("%H", time.localtime())
-		time_day = time.strftime("%d", time.localtime())
-		time_month = time.strftime("%m", time.localtime())
-		time_year = time.strftime("%y", time.localtime())
-
-		for hookconfig in _cache.execute("select name,module,command from binds where event == 'time'"):
-			hook = str(hookconfig[0])
-			module = str(hookconfig[1])
-			command = str(hookconfig[2])
-
-			if command != "":
-				times = command.split()
-
-				if len(times) == 1:
-					if fnmatch.fnmatch(time_minute, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
-				elif len(times) == 2:
-					if fnmatch.fnmatch(time_minute + " " + time_hour, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
-				elif len(times) == 3:
-					if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
-				elif len(times) == 4:
-					if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day + " " + time_month, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
-				elif len(times) == 5:
-					if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day + " " + time_month + " " + time_year, command):
-						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, time_minute, time_hour, time_day, time_month, time_year))
-
-		_cache.close()
-		_userdb.close()
-		_chandb.close()
-	except Exception,e:
-		printe(str(e))
-	except socket.error,e:
-		print(str(e))
-	except KeyboardInterrupt:
-		printe("\nAborting ... CTRL + C")
-		sys.exit(2)
-
 def main():
 	c.read("configs/main.conf")
 	global _ip
 	global lasterror
 	global _timer
-	global src_counter
-	global mod_counter
+	__builtin__._botnick = c.get("BOT", "nick")
+	__builtin__._cache = sqlite3.connect("database/cache.db")
+	_cache.isolation_level = None
+	_cache.execute("delete from src")
+	_cache.execute("delete from modules")
+	_cache.execute("delete from binds")
+	_cache.execute("delete from botnick")
+	_cache.execute("insert into botnick values ('%s')" % _botnick)
+	__builtin__._userdb = sqlite3.connect("database/user.db")
+	_userdb.isolation_level = None
+	_userdb.execute("delete from auth")
+	__builtin__._chandb = sqlite3.connect("database/chan.db")
+	_chandb.isolation_level = None
 
 	if c.getboolean("SERVER", "ipv6") and socket.has_ipv6:
 		if c.getboolean("SERVER", "ssl"):
@@ -233,6 +198,28 @@ def main():
 
 	try:
 		s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+		src_counter = 0
+
+		for source in os.listdir("src"):
+			if source != "__init__.py" and source.endswith(".py"):
+				exec("import src.%s" % source.split(".py")[0])
+				exec("src.%s.load()" % source.split(".py")[0])
+				_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
+				src_counter += 1
+				printa("src %s loaded" % source.split(".py")[0])
+
+		printa("Loaded {0} sources.".format(src_counter))
+		mod_counter = 0
+
+		for mod in os.listdir("modules"):
+			if mod != "__init__.py" and mod.endswith(".py"):
+				exec("import modules.%s" % mod.split(".py")[0])
+				exec("modules.%s.load()" % mod.split(".py")[0])
+				_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
+				mod_counter += 1
+				printa("module %s loaded" % mod.split(".py")[0])
+
+		printa("Loaded {0} modules.".format(mod_counter))
 
 		if c.get("SERVER", "bind") != "":
 			s.bind((c.get("SERVER", "bind").split()[_ip], 0))
@@ -254,9 +241,6 @@ def main():
 		s.connect((c.get("SERVER", "address"), int(c.get("SERVER", "port"))))
 		putf('NICK '+_botnick)
 		putf('USER '+c.get("BOT", "username")+' '+socket.getfqdn(c.get("SERVER", "address"))+' MechiSoft :'+c.get("BOT", "realname"))
-		__builtin__.__timer = Scheduler()
-		__timer.add_cron_job(scheduler_thread, second=0)
-		__timer.start()
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
@@ -535,6 +519,7 @@ def main():
 				lasterror = e
 				printe(e)
 		except socket.error:
+			disconnect()
 			return 0
 		except KeyboardInterrupt:
 			printe("\nAborting ... CTRL + C")
@@ -655,56 +640,11 @@ if __name__ == '__main__':
 				print(sys.argv[0]+" database		creates new databases")
 				print(sys.argv[0]+" configure		config maker")
 		else:
-			while True:
-				c.read("configs/main.conf")
-				global src_counter
-				global mod_counter
-				thread.start_new_thread(put_query, ())
-				printa("Started put_query-thread.")
-				thread.start_new_thread(keepnick, ())
-				printa("Started keepnick-thread.")
-				__builtin__._cache = sqlite3.connect("database/cache.db")
-				_cache.isolation_level = None
-				__builtin__._userdb = sqlite3.connect("database/user.db")
-				_userdb.isolation_level = None
-				__builtin__._chandb = sqlite3.connect("database/chan.db")
-				_chandb.isolation_level = None
-				__builtin__._botnick = c.get("BOT", "nick")
-				_cache.execute("delete from src")
-				_cache.execute("delete from modules")
-				_cache.execute("delete from binds")
-				_cache.execute("delete from botnick")
-				_cache.execute("insert into botnick values ('%s')" % _botnick)
-				_userdb.execute("delete from auth")
-				src_counter = 0
-
-				for source in os.listdir("src"):
-					if source != "__init__.py" and source.endswith(".py"):
-						exec("import src.%s" % source.split(".py")[0])
-						exec("src.%s.load()" % source.split(".py")[0])
-						_cache.execute("insert into src values ('%s')" % source.split(".py")[0])
-						src_counter += 1
-						printa("src %s loaded" % source.split(".py")[0])
-
-				printa("Loaded {0} sources.".format(src_counter))
-				mod_counter = 0
-
-				for mod in os.listdir("modules"):
-					if mod != "__init__.py" and mod.endswith(".py"):
-						exec("import modules.%s" % mod.split(".py")[0])
-						exec("modules.%s.load()" % mod.split(".py")[0])
-						_cache.execute("insert into modules values ('%s')" % mod.split(".py")[0])
-						mod_counter += 1
-						printa("module %s loaded" % mod.split(".py")[0])
-
-				printa("Loaded {0} modules.".format(mod_counter))
-				main()
-				_userdb.close()
-				_chandb.close()
-				_cache.close()
-				printa("connection closed")
-				printa("reconnecting in "+c.get("SERVER", "reconnect")+" seconds")
-				time.sleep(int(c.get("SERVER", "reconnect")))
+			thread.start_new_thread(put_query, ())
+			printa("Started put_query-thread.")
+			thread.start_new_thread(keepnick, ())
+			printa("Started keepnick-thread.")
+			main()
 	except Exception:
 		et, ev, tb = sys.exc_info()
 		e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
