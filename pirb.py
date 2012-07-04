@@ -16,7 +16,7 @@ import ssl
 import inspect
 import base64
 import fnmatch
-import apscheduler
+from apscheduler.scheduler import Scheduler
 
 __app__ = "PIRB"
 
@@ -122,6 +122,7 @@ def keepnick():
 
 def disconnect():
 	try:
+		_timer.shutdown()
 		s.close()
 		_userdb.close()
 		_chandb.close()
@@ -206,6 +207,7 @@ def main():
 	c.read("configs/main.conf")
 	global _ip
 	global lasterror
+	global _timer
 	__builtin__._botnick = c.get("BOT", "nick")
 	__builtin__._cache = sqlite3.connect("database/cache.db")
 	_cache.isolation_level = None
@@ -219,7 +221,7 @@ def main():
 	_userdb.execute("delete from auth")
 	__builtin__._chandb = sqlite3.connect("database/chan.db")
 	_chandb.isolation_level = None
-	_timer = apscheduler.scheduler.Scheduler()
+	_timer = Scheduler()
 	_timer.add_cron_job(scheduler_thread, second=0, args=[_cache, _userdb, _chandb])
 	_timer.start()
 
