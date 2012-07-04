@@ -396,7 +396,7 @@ def main():
 								return 0
 						elif arg.split()[0].lower() == "jobs" and line.split()[2][0] != "#":
 							if src.user.getauth(nick).lower() == c.get("ADMIN", "auth").lower() or arg.split()[1] == c.get("ADMIN", "password"):
-								put("NOTICE " + nick + " :[JOBS] " + ', '.join(_timer.get_jobs()))
+								put("NOTICE " + nick + " :[JOBS] " + _timer.print_jobs())
 
 						if target.startswith("#"):
 							for hookconfig in _cache.execute("select name,module,command from binds where event == 'pub'"):
