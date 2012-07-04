@@ -362,9 +362,9 @@ def main():
 								command = str(hookconfig[2])
 
 	 							if command != "" and cmd.lower() == command.lower():
-									exec("""thread.start_new_thread(%s.%s,("%s","%s","%s","%s"))""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
+									exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
 								elif command == "":
-									exec("""thread.start_new_thread(%s.%s,("%s","%s","%s","%s"))""" % (module, hook, nick, uhost, target, arg))
+									exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
 						else:
 							for hookconfig in _cache.execute("select name,module,command from binds where event == 'msg'"):
 								hook = str(hookconfig[0])
@@ -372,9 +372,9 @@ def main():
 								command = str(hookconfig[2])
 
 								if command != "" and cmd.lower() == command.lower():
-									exec("""thread.start_new_thread(%s.%s,("%s","%s","%s"))""" % (module, hook, nick, uhost, ' '.join(arg.split()[1:])))
+									exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, ' '.join(arg.split()[1:])))
 								elif command == "":
-									exec("""thread.start_new_thread(%s.%s,("%s","%s","%s"))""" % (module, hook, nick, uhost, arg))
+									exec("""%s.%s("%s","%s","%s")""" % (module, hook, nick, uhost, arg))
 
 					elif line.split()[1].lower() == "notice" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 						nick = line.split("!")[0]
@@ -389,9 +389,9 @@ def main():
 							command = str(hookconfig[2])
 
 							if command != "" and cmd.lower() == command.lower():
-								exec("""thread.start_new_thread(%s.%s,("%s","%s","%s","%s"))""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
+								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, ' '.join(arg.split()[1:])))
 							elif command == "":
-								exec("""thread.start_new_thread(%s.%s,("%s","%s","%s","%s"))""" % (module, hook, nick, uhost, target, arg))
+								exec("""%s.%s("%s","%s","%s","%s")""" % (module, hook, nick, uhost, target, arg))
 					elif line.split()[1].lower() == "topic" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 						nick = line.split("!")[0]
 						uhost = line.split("!")[1].split()[0]
@@ -405,7 +405,7 @@ def main():
 						for hookconfig in _cache.execute("select name,module from binds where event == 'topic'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
-							exec("""thread.start_new_thread(%s.%s,("%s", "%s", "%s", "%s"))""" % (module, hook, nick, uhost, target, arg))
+							exec("""%s.%s("%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, target, arg))
 					elif line.split()[1].lower() == "mode" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1 and line.split()[2][0] == "#":
 						nick = line.split("!")[0]
 						uhost = line.split("!")[1].split()[0]
@@ -419,7 +419,7 @@ def main():
 						for hookconfig in _cache.execute("select name,module from binds where event == 'mode'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
-							exec("""thread.start_new_thread(%s.%s,("%s", "%s", "%s", "%s"))""" % (module, hook, nick, uhost, target, arg))
+							exec("""%s.%s("%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, target, arg))
 					elif line.split()[1].lower() == "join" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 						nick = line.split("!")[0]
 						uhost = line.split("!")[1].split()[0]
@@ -428,7 +428,7 @@ def main():
 						for hookconfig in _cache.execute("select name,module from binds where event == 'join'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
-							exec("""thread.start_new_thread(%s.%s,("%s", "%s", "%s"))""" % (module, hook, nick, uhost, target))
+							exec("""%s.%s("%s", "%s", "%s")""" % (module, hook, nick, uhost, target))
 					elif line.split()[1].lower() == "part" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 						nick = line.split("!")[0]
 						uhost = line.split("!")[1].split()[0]
@@ -442,7 +442,7 @@ def main():
 						for hookconfig in _cache.execute("select name,module from binds where event == 'part'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
-							exec("""thread.start_new_thread(%s.%s,("%s", "%s", "%s", "%s"))""" % (module, hook, nick, uhost, target, arg))
+							exec("""%s.%s("%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, target, arg))
 					elif line.split()[1].lower() == "quit" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 						nick = line.split("!")[0]
 						uhost = line.split("!")[1].split()[0]
@@ -455,7 +455,7 @@ def main():
 						for hookconfig in _cache.execute("select name,module from binds where event == 'quit'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
-							exec("""thread.start_new_thread(%s.%s,("%s", "%s", "%s"))""" % (module, hook, nick, uhost, arg))
+							exec("""%s.%s("%s", "%s", "%s")""" % (module, hook, nick, uhost, arg))
 					elif line.split()[1].lower() == "nick" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 						nick = line.split("!")[0]
 						uhost = line.split("!")[1].split()[0]
@@ -467,7 +467,7 @@ def main():
 						for hookconfig in _cache.execute("select name,module from binds where event == 'nick'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
-							exec("""thread.start_new_thread(%s.%s,("%s", "%s", "%s"))""" % (module, hook, nick, uhost, target))
+							exec("""%s.%s("%s", "%s", "%s")""" % (module, hook, nick, uhost, target))
 					elif line.split()[1].lower() == "kick" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 						nick = line.split("!")[0]
 						uhost = line.split("!")[1].split()[0]
@@ -482,7 +482,7 @@ def main():
 						for hookconfig in _cache.execute("select name,module from binds where event == 'kick'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
-							exec("""thread.start_new_thread(%s.%s,("%s", "%s", "%s", "%s", "%s"))""" % (module, hook, nick, uhost, chan, target, arg))
+							exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, chan, target, arg))
 					elif line.split()[1].lower() == "invite" and line.split()[0].find("!") != -1 and line.split()[0].find("@") != -1:
 						nick = line.split("!")[0]
 						uhost = line.split("!")[1].split()[0]
@@ -495,7 +495,7 @@ def main():
 						for hookconfig in _cache.execute("select name,module from binds where event == 'invite'"):
 							hook = str(hookconfig[0])
 							module = str(hookconfig[1])
-							exec("""thread.start_new_thread(%s.%s,("%s", "%s", "%s", "%s")=""" % (module, hook, nick, uhost, chan, target))
+							exec("""%s.%s("%s", "%s", "%s", "%s")""" % (module, hook, nick, uhost, chan, target))
 
 
 					for hookconfig in _cache.execute("select name,module,command from binds where event == 'raw'"):
@@ -505,9 +505,9 @@ def main():
 						cmdo = line.split()[1]
 
 						if command != "" and cmdo.lower() == command.lower():
-							exec("""thread.start_new_thread(%s.%s,("%s"))""" % (module, hook, reg))
+							exec("""%s.%s("%s")""" % (module, hook, reg))
 						elif command == "":
-							exec("""thread.start_new_thread(%s.%s,("%s"))""" % (module, hook, reg))
+							exec("""%s.%s("%s")""" % (module, hook, reg))
 		except Exception:
 			et, ev, tb = sys.exc_info()
 			e = "{0} {1} (Line #{2})".format(et, ev, traceback.tb_lineno(tb))
