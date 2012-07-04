@@ -170,14 +170,19 @@ def put_query():
 		sys.exit(2)
 
 def scheduler_thread():
-	time_minute = time.strftime("%M", time.localtime())
-	time_hour = time.strftime("%H", time.localtime())
-	time_day = time.strftime("%d", time.localtime())
-	time_month = time.strftime("%m", time.localtime())
-	time_year = time.strftime("%y", time.localtime())
-	printe("##################### " + _botnick)
-
 	try:
+		__builtin__._cache = sqlite3.connect("database/cache.db")
+		_cache.isolation_level = None
+		__builtin__._userdb = sqlite3.connect("database/user.db")
+		_userdb.isolation_level = None
+		__builtin__._chandb = sqlite3.connect("database/chan.db")
+		_chandb.isolation_level = None
+		time_minute = time.strftime("%M", time.localtime())
+		time_hour = time.strftime("%H", time.localtime())
+		time_day = time.strftime("%d", time.localtime())
+		time_month = time.strftime("%m", time.localtime())
+		time_year = time.strftime("%y", time.localtime())
+
 		for hookconfig in _cache.execute("select name,module,command from binds where event == 'time'"):
 			hook = str(hookconfig[0])
 			module = str(hookconfig[1])
@@ -201,6 +206,10 @@ def scheduler_thread():
 				elif len(times) == 5:
 					if fnmatch.fnmatch(time_minute + " " + time_hour + " " + time_day + " " + time_month + " " + time_year, command):
 						exec("""%s.%s("%s", "%s", "%s", "%s", "%s")""" % (hook, module, time_minute, time_hour, time_day, time_month, time_year))
+
+		_cache.close()
+		_userdb.close()
+		_chandb.close()
 	except Exception,e:
 		printe(str(e))
 	except socket.error,e:
