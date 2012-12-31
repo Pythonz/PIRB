@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# Copyright by Chiruclan 2011-2013
+# Copyright by Pythonz 2011-2013
 
 import sys
 import socket
